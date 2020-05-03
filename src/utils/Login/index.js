@@ -30,7 +30,7 @@ export function checkPassword(v){
 
 // 验证码验证
 export function validateCode(value){
-  var vCode=/^\d{6}$/
+  var vCode=/^(?!\D+$)(?![^a-zA-Z]+$)\S{6}$/
   if(!vCode.test(value)){
     return true
   }else {

@@ -3,8 +3,8 @@
     <div class="login-tab">
       <ul>
         <li
-          @click="tab(item.id)"
-          :class="activeIndex===item.id?'currtarget':''"
+          @click="tab(item.type)"
+          :class="activeIndex===item.type?'currtarget':''"
           v-for="item in metuTab"
           :key="item.id"
         >{{item.text}}</li>
@@ -19,119 +19,242 @@
       class="demo-ruleForm"
     >
       <el-form-item prop="email">
-        <label style="color:#ffffff;margin-bottom:13px">邮箱</label>
-        <el-input type="text" v-model="ruleForm.email" autocomplete="off"></el-input>
+        <label for="email" style="color:#ffffff;margin-bottom:13px">邮箱</label>
+        <el-input id="email" type="text" v-model="ruleForm.email" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <label style="color:#ffffff;margin-bottom:13px">密码</label>
-        <el-input maxlength=20 minlength=6 type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+        <label for="password" style="color:#ffffff;margin-bottom:13px">密码</label>
+        <el-input
+          id="password"
+          maxlength="20"
+          minlength="6"
+          type="password"
+          v-model="ruleForm.password"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
-      <el-form-item prop="againPwd" v-if="this.activeIndex===2">
-        <label style="color:#ffffff;margin-bottom:13px">重新输入密码</label>
-        <el-input maxlength=20 minlength=6 type="password" v-model="ruleForm.againPwd" autocomplete="off"></el-input>
+      <el-form-item prop="againPwd" v-if="this.activeIndex==='register'">
+        <label for="againPwd" style="color:#ffffff;margin-bottom:13px">重新输入密码</label>
+        <el-input
+          id="againPwd"
+          maxlength="20"
+          minlength="6"
+          type="password"
+          v-model="ruleForm.againPwd"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item prop="code">
-        <label style="color:#ffffff;margin-bottom:13px">验证码</label>
+        <label for="code" style="color:#ffffff;margin-bottom:13px">验证码</label>
         <el-row :gutter="20">
           <el-col :span="16">
             <div class="grid-content bg-purple">
-              <el-input minlength=6 maxlength=6 v-model.number="ruleForm.code"></el-input>
+              <el-input id="code" minlength="6" maxlength="6" v-model="ruleForm.code"></el-input>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="grid-content bg-purple">
-              <el-button type="success" class="block">获取验证码</el-button>
+              <el-button
+                type="success"
+                class="block"
+                :disabled="Codedisabled"
+                @click="getCode"
+              >{{getCodeText}}</el-button>
             </div>
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item>
-        <el-button style="width:100%" type="danger" @click="submitForm('ruleForm')">登陆</el-button>
+        <el-button
+          style="width:100%"
+          type="danger"
+          :disabled="btndisabled"
+          @click="submitForm('ruleForm')"
+        >{{activeIndex==='login'?'登陆':'注册'}}</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { stripscript,checkEmail,validateCode,checkPassword } from '@/utils/Login/index.js'
+import instance from "@/utils/requset.js";
+import {
+  stripscript,
+  checkEmail,
+  validateCode,
+  checkPassword
+} from "@/utils/Login/index.js";
+import { getMsg, login, register } from "@/api/login.js";
 export default {
   data() {
     // 验证登陆邮箱
     var validateEmail = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入邮箱"));
-      } else if(checkEmail(value)){
+      } else if (checkEmail(value)) {
         callback(new Error("输入邮箱的格式不正确，请重新输入"));
-      }else {
+      } else {
         callback();
       }
     };
     // 验证登陆密码
     var validatePass = (rule, value, callback) => {
-      this.ruleForm.password=stripscript(value)
-      value=stripscript(value)
+      this.ruleForm.password = stripscript(value);
+      value = stripscript(value);
       if (value === "") {
         callback(new Error("请输入密码"));
-      } else if(checkPassword(value)){
+      } else if (checkPassword(value)) {
         callback(new Error("密码格式不正确,请重新输入密码"));
       } else {
         callback();
       }
     };
     // 注册：确认密码是否一致
-    var againPassword = (rule,value,callback) => {
-      if(value!=this.ruleForm.password){
-        callback(new Error("密码不一致，请重新输入"))
+    var againPassword = (rule, value, callback) => {
+      if (value != this.ruleForm.password) {
+        callback(new Error("密码不一致，请重新输入"));
+      } else if (value === "") {
+        callback(new Error("密码不一致，请重新输入"));
+      } else {
+        callback();
       }
-    }
+    };
     // 验证验证码
     var checkCode = (rule, value, callback) => {
       if (!value) {
         callback(new Error("验证码不能为空"));
-      }else if(validateCode(value)){
-        callback(new Error("验证码有误，请重新输入"))
+      } else if (validateCode(value)) {
+        callback(new Error("验证码有误，请重新输入"));
+      } else {
+        callback();
       }
     };
     return {
       metuTab: [
-        { id: 1, text: "登陆" },
-        { id: 2, text: "注册" }
+        { id: 1, text: "登陆", type: "login" },
+        { id: 2, text: "注册", type: "register" }
       ],
-      activeIndex: 1,
+      activeIndex: "login",
+      btndisabled: true, //登陆、注册按钮禁用
+      getCodeText: "获取验证码", //获取验证码文字修改
+      Codedisabled: false, //获取验证码按钮禁用
+      getCodeTime: null, //获取验证码按钮重新获取时间
       ruleForm: {
         email: "",
         password: "",
         code: "",
-        againPwd:""
+        againPwd: ""
       },
       rules: {
         email: [{ validator: validateEmail, trigger: "blur" }],
         password: [{ validator: validatePass, trigger: "blur" }],
         code: [{ validator: checkCode, trigger: "blur" }],
-        againPwd:[{ validator: againPassword, trigger: "blur" }]
+        againPwd: [{ validator: againPassword, trigger: "blur" }]
       }
     };
   },
   methods: {
-    tab(id) {
-      this.activeIndex = id;
-      this.ruleForm.email=''
-      this.ruleForm.password=''
-      this.ruleForm.code=''
-      this.ruleForm.againPwd=''
+    // 登陆、注册切换
+    tab(list) {
+      this.activeIndex = list;
+      this.ruleForm.email = "";
+      this.ruleForm.password = "";
+      this.ruleForm.code = "";
+      this.ruleForm.againPwd = "";
+      this.btndisabled = true;
+      this.getCodeText = "获取验证码";
     },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+    submitForm(ruleForm) {
+      this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          alert("submit!");
+          if (this.activeIndex == "login") {
+            let loginInfo = {
+              username: this.ruleForm.email,
+              password: this.ruleForm.password,
+              code: this.ruleForm.code
+            };
+            login(loginInfo).then(response=>{
+              console.log(response)
+            })
+          } else {
+            let registerInfo = {
+              username: this.ruleForm.email,
+              password: this.ruleForm.password,
+              code: this.ruleForm.code
+            };
+            register(registerInfo).then(response => {
+              let data = response.data;
+              this.$message({
+                message: data.message,
+                type: "success"
+              });
+              console.log(response);
+              if (data.resCode === 0) {
+                this.resetBtn();
+              }
+            });
+          }
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    // 获取验证码
+    getCode() {
+      console.log(this.activeIndex);
+      let setCode = { username: this.ruleForm.email, model: this.activeIndex };
+      if (this.ruleForm.email === "") {
+        this.$message({
+          message: "邮箱不能为空,请填写邮箱",
+          type: "warning"
+        });
+        return false;
+      }
+      setTimeout(() => {
+        getMsg(setCode).then(response => {
+          let data = response.data;
+          this.$message({
+            message: data.message,
+            type: "success"
+          });
+          var timeNumber = 3;
+          this.timeDown(timeNumber);
+        });
+      }, 3000);
+      // 点击修改获取验证码按钮文字
+      this.getCodeText = "发送中";
+      this.Codedisabled = true;
+    },
+    // 获取验证码按钮60秒后重新获取
+    timeDown(timeNumber) {
+      // console.log(timeNumber)
+      if (this.getCodeTime) {
+        clearInterval(this.getCodeTime);
+      }
+      this.getCodeTime = setInterval(() => {
+        timeNumber--;
+        console.log(timeNumber);
+        this.getCodeText = timeNumber + "s";
+        this.btndisabled = true;
+        if (timeNumber == 0) {
+          clearInterval(this.getCodeTime);
+          this.getCodeText = "重新发送";
+          this.btndisabled = false;
+          this.Codedisabled = false;
+        }
+      }, 1000);
+    },
+    // 还原按钮和跳转登陆
+    resetBtn() {
+      this.activeIndex = "login";
+      this.getCodeText = "获取验证码";
+      this.ruleForm.email = "";
+      this.ruleForm.password = "";
+      this.ruleForm.code = "";
+      this.ruleForm.againPwd = "";
+      this.btndisabled = true;
+      clearInterval(this.getCodeTime);
     }
   }
 };
