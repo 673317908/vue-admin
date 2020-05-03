@@ -162,12 +162,14 @@ export default {
       this.ruleForm.code = "";
       this.ruleForm.againPwd = "";
       this.btndisabled = true;
+      this.Codedisabled=false
       this.getCodeText = "获取验证码";
     },
     submitForm(ruleForm) {
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           if (this.activeIndex == "login") {
+            // 登陆页面触发
             let loginInfo = {
               username: this.ruleForm.email,
               password: this.ruleForm.password,
@@ -177,6 +179,7 @@ export default {
               console.log(response)
             })
           } else {
+            // 注册页面触发
             let registerInfo = {
               username: this.ruleForm.email,
               password: this.ruleForm.password,
@@ -190,6 +193,7 @@ export default {
               });
               console.log(response);
               if (data.resCode === 0) {
+                // 注册成功恢复按钮文字和跳转到登陆
                 this.resetBtn();
               }
             });
@@ -211,14 +215,16 @@ export default {
         });
         return false;
       }
+      // 点击按钮，3秒后获取验证码
       setTimeout(() => {
+        // 获取验证码请求
         getMsg(setCode).then(response => {
           let data = response.data;
           this.$message({
             message: data.message,
             type: "success"
           });
-          var timeNumber = 3;
+          var timeNumber = 3; //多少秒后可重新发送获取验证码请求
           this.timeDown(timeNumber);
         });
       }, 3000);
@@ -236,12 +242,13 @@ export default {
         timeNumber--;
         console.log(timeNumber);
         this.getCodeText = timeNumber + "s";
-        this.btndisabled = true;
+        this.btndisabled = true;  //将登陆或注册按钮禁用
+        this.Codedisabled=true //将获取验证码按钮禁用
         if (timeNumber == 0) {
           clearInterval(this.getCodeTime);
           this.getCodeText = "重新发送";
-          this.btndisabled = false;
-          this.Codedisabled = false;
+          this.btndisabled = false; //将登陆或注册按钮
+          this.Codedisabled = false; //将获取验证码按钮启用
         }
       }, 1000);
     },
