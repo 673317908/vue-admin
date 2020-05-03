@@ -177,6 +177,9 @@ export default {
             };
             login(loginInfo).then(response=>{
               console.log(response)
+              this.$router.push({
+                path:'/control'
+              })
             })
           } else {
             // 注册页面触发
