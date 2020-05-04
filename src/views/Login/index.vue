@@ -77,6 +77,8 @@
 </template>
 
 <script>
+// 引入密码加密
+import sha1 from 'js-sha1'
 import instance from "@/utils/requset.js";
 import {
   stripscript,
@@ -172,7 +174,7 @@ export default {
             // 登陆页面触发
             let loginInfo = {
               username: this.ruleForm.email,
-              password: this.ruleForm.password,
+              password: sha1(this.ruleForm.password),
               code: this.ruleForm.code
             };
             login(loginInfo).then(response=>{
@@ -185,7 +187,7 @@ export default {
             // 注册页面触发
             let registerInfo = {
               username: this.ruleForm.email,
-              password: this.ruleForm.password,
+              password: sha1(this.ruleForm.password),
               code: this.ruleForm.code
             };
             register(registerInfo).then(response => {
