@@ -12,6 +12,7 @@
       text-color="#ffffff"
       active-text-color="#ffffff"
       router
+      :collapse="check_isCollapse"
     >
       <!-- 一级菜单 -->
       <template v-for="(item,index) in routers">
@@ -36,7 +37,7 @@
 export default {
   data() {
     return {
-      // isCollapse: true
+      isCollapse: true,
       routers: {}
     };
   },
@@ -51,6 +52,11 @@ export default {
   mounted() {
     console.log(this.$router.options.routes);
     this.routers = this.$router.options.routes;
+  },
+  computed: {
+    check_isCollapse() {
+      return (this.isCollapse = this.$store.state.isCollapse);
+    }
   }
 };
 </script>
@@ -59,9 +65,9 @@ export default {
 #nav {
   width: 250px;
   height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+  // position: fixed;
+  // top: 0;
+  // left: 0;
   background-color: #344a5f;
   .logo {
     width: 100%;
@@ -70,6 +76,34 @@ export default {
       display: block;
       margin: 0 auto;
     }
+  }
+}
+.open {
+  #nav {
+    width: 250px;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
+  .logo {
+    img {
+      width: 155px !important;
+      -webkit-transition: all 1s ease-in-out 0s;
+    }
+  }
+}
+.close {
+  #nav {
+    width: 64px;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
+  .logo {
+    img {
+      width: 60px !important;
+      -webkit-transition: all 1s ease-in-out 0s;
+    }
+  }
+  .el-menu-vertical-demo {
+    width: 64px;
+    -webkit-transition: all 1s ease-in-out 0s;
   }
 }
 .el-menu-vertical-demo {

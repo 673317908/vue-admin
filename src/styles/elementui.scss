@@ -1,4 +1,7 @@
 // 一级菜单样式
+ul.el-menu {
+  border-right: none;
+}
 li.el-submenu {
   &.is-active.is-opened .el-submenu__title{
     background-color: #ff796c !important;

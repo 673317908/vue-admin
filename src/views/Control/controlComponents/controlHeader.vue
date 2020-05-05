@@ -2,7 +2,7 @@
   <div id="header">
     <div class="header-info">
       <div class="header-left">
-        <i class="el-icon-s-operation"></i>
+        <i class="el-icon-s-operation" @click="collapseStatus"></i>
       </div>
       <div class="header-right">
         <div class="user-img">
@@ -19,7 +19,16 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    collapseStatus() {
+      this.$store.commit("controlCollapse");
+    }
+  }
+};
 </script>
 
 <style lang='less' scoped>
@@ -66,6 +75,24 @@ export default {};
       font-size: 35px;
       cursor: pointer;
     }
+  }
+}
+.open {
+    #header {
+    position: fixed;
+    left: 250px;
+    top: 0;
+    width: 83%;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
+}
+.close {
+  #header {
+    position: fixed;
+    left: 64px;
+    top: 0;
+    width: 96%;
+    -webkit-transition: all 1s ease-in-out 0s;
   }
 }
 </style>

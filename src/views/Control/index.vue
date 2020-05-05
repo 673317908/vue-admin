@@ -1,8 +1,8 @@
 <template>
-  <div id="ControlIndex">
+  <div id="ControlIndex" :class="indexStatus?'close':'open'">
+    <controlNav/>
     <controlHeader/>
     <controlContent/>
-    <controlNav/>
   </div>
 </template>
 
@@ -15,6 +15,16 @@ export default {
     controlContent,
     controlNav,
     controlHeader
+  },
+  data(){
+    return {
+
+    }
+  },
+  computed:{
+    indexStatus(){
+      return this.$store.state.isCollapse
+    }
   }
 }
 </script>

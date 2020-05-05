@@ -5,9 +5,7 @@
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style lang='less' scoped>
@@ -16,7 +14,25 @@ export default {
   top: 75px;
   left: 250px;
   border: 20px solid #f8f6f8;
-  width: 100%;
-  height: 100%;
+  padding: 30px;
+  width: 75%;
+  height: 75%;
+}
+.open {
+  #content {
+    position: fixed;
+    top: 75px;
+    left: 250px;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
+}
+.close {
+  #content {
+    position: fixed;
+    top: 75px;
+    left: 64px;
+    width: 89%;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
 }
 </style>
