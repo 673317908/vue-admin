@@ -86,7 +86,7 @@ import {
   validateCode,
   checkPassword
 } from "@/utils/Login/index.js";
-import { getMsg, login, register } from "@/api/login.js";
+import { getMsg, Login, register } from "@/api/login.js";
 export default {
   data() {
     // 验证登陆邮箱
@@ -177,12 +177,22 @@ export default {
               password: sha1(this.ruleForm.password),
               code: this.ruleForm.code
             };
-            login(loginInfo).then(response=>{
+            this.$store.dispatch('login',loginInfo).then(response=>{
               console.log(response)
               this.$router.push({
                 path:'/control'
               })
+            }).catch(error=>{
+              console.log(error)
             })
+            // Login(loginInfo).then(response=>{
+            //   console.log(response)
+            //   this.$router.push({
+            //     path:'/control'
+            //   })
+            // }).catch(error=>{
+            //   console.log(error)
+            // })
           } else {
             // 注册页面触发
             let registerInfo = {

@@ -14,7 +14,7 @@ export function getMsg(data){
 /**
  * 登陆
  */
-export function login(data){
+export function Login(data){
   return axios.request({
     method:'post',
     url:'/login/',

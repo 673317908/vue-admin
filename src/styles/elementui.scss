@@ -14,3 +14,10 @@ li.el-submenu {
     background-color: rgba(235, 241, 251,0.2) !important;
   }
 }
+
+.close {
+  ul.el-menu {
+    width: 64px;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
+}

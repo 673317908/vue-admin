@@ -1,6 +1,6 @@
 <template>
   <div id="content">
-    dsadsadsadsadsada
+    首页
   </div>
 </template>
 

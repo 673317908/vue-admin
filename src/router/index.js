@@ -6,7 +6,7 @@ import Login from '@/views/Login/index.vue'
 import Control from '@/views/Control/index.vue'
 
 // 子页面
-import Index from '@/views/Control/content/index.vue'  //控制台首页
+import Index from '@/views/content/index.vue'  //控制台首页
 import InfoList from "@/views/Info/infoList.vue" //信息管理列表
 import Category from "@/views/Info/infoCategory.vue" //信息管理分类
 import UserList from "@/views/Users/userList.vue" //用户分类

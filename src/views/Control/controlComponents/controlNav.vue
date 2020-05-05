@@ -13,7 +13,6 @@
       active-text-color="#ffffff"
       router
       :collapse="check_isCollapse"
-      :unique-opened='uniqueopened'
     >
       <!-- 一级菜单 -->
       <template v-for="(item,index) in routers">
@@ -39,7 +38,6 @@ export default {
   data() {
     return {
       isCollapse: true,
-      uniqueopened:false,
       routers: {}
     };
   },
@@ -67,9 +65,9 @@ export default {
 #nav {
   width: 250px;
   height: 100vh;
-  // position: fixed;
-  // top: 0;
-  // left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
   background-color: #344a5f;
   .logo {
     width: 100%;
@@ -92,10 +90,6 @@ export default {
       -webkit-transition: all 1s ease-in-out 0s;
     }
   }
-  .el-menu-vertical-demo {
-    width: 250px;
-    -webkit-transition: all 1s ease-in-out 0s;
-  }
 }
 .close {
   #nav {
@@ -107,10 +101,6 @@ export default {
       width: 70% !important;
       -webkit-transition: all 1s ease-in-out 0s;
     }
-  }
-  .el-menu-vertical-demo {
-    width: 64px;
-    -webkit-transition: all 1s ease-in-out 0s;
   }
 }
 </style>
