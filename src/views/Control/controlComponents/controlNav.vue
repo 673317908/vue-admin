@@ -8,11 +8,12 @@
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
-      background-color="transparent"
+      background-color="#344a5f"
       text-color="#ffffff"
       active-text-color="#ffffff"
       router
       :collapse="check_isCollapse"
+      :unique-opened='uniqueopened'
     >
       <!-- 一级菜单 -->
       <template v-for="(item,index) in routers">
@@ -38,6 +39,7 @@ export default {
   data() {
     return {
       isCollapse: true,
+      uniqueopened:false,
       routers: {}
     };
   },
@@ -71,6 +73,7 @@ export default {
   background-color: #344a5f;
   .logo {
     width: 100%;
+    padding-top: 20px;
     img {
       width: 155px;
       display: block;
@@ -89,6 +92,10 @@ export default {
       -webkit-transition: all 1s ease-in-out 0s;
     }
   }
+  .el-menu-vertical-demo {
+    width: 250px;
+    -webkit-transition: all 1s ease-in-out 0s;
+  }
 }
 .close {
   #nav {
@@ -97,7 +104,7 @@ export default {
   }
   .logo {
     img {
-      width: 60px !important;
+      width: 70% !important;
       -webkit-transition: all 1s ease-in-out 0s;
     }
   }
@@ -105,8 +112,5 @@ export default {
     width: 64px;
     -webkit-transition: all 1s ease-in-out 0s;
   }
-}
-.el-menu-vertical-demo {
-  width: 250px;
 }
 </style>
