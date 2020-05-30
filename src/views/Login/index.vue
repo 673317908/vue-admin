@@ -4,10 +4,12 @@
       <ul>
         <li
           @click="tab(item.type)"
-          :class="activeIndex===item.type?'currtarget':''"
+          :class="activeIndex === item.type ? 'currtarget' : ''"
           v-for="item in metuTab"
           :key="item.id"
-        >{{item.text}}</li>
+        >
+          {{ item.text }}
+        </li>
       </ul>
     </div>
     <el-form
@@ -20,10 +22,17 @@
     >
       <el-form-item prop="email">
         <label for="email" style="color:#ffffff;margin-bottom:13px">邮箱</label>
-        <el-input id="email" type="text" v-model="ruleForm.email" autocomplete="off"></el-input>
+        <el-input
+          id="email"
+          type="text"
+          v-model="ruleForm.email"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <label for="password" style="color:#ffffff;margin-bottom:13px">密码</label>
+        <label for="password" style="color:#ffffff;margin-bottom:13px"
+          >密码</label
+        >
         <el-input
           id="password"
           maxlength="20"
@@ -33,8 +42,10 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item prop="againPwd" v-if="this.activeIndex==='register'">
-        <label for="againPwd" style="color:#ffffff;margin-bottom:13px">重新输入密码</label>
+      <el-form-item prop="againPwd" v-if="this.activeIndex === 'register'">
+        <label for="againPwd" style="color:#ffffff;margin-bottom:13px"
+          >重新输入密码</label
+        >
         <el-input
           id="againPwd"
           maxlength="20"
@@ -45,11 +56,18 @@
         ></el-input>
       </el-form-item>
       <el-form-item prop="code">
-        <label for="code" style="color:#ffffff;margin-bottom:13px">验证码</label>
+        <label for="code" style="color:#ffffff;margin-bottom:13px"
+          >验证码</label
+        >
         <el-row :gutter="20">
           <el-col :span="16">
             <div class="grid-content bg-purple">
-              <el-input id="code" minlength="6" maxlength="6" v-model="ruleForm.code"></el-input>
+              <el-input
+                id="code"
+                minlength="6"
+                maxlength="6"
+                v-model="ruleForm.code"
+              ></el-input>
             </div>
           </el-col>
           <el-col :span="8">
@@ -59,7 +77,8 @@
                 class="block"
                 :disabled="Codedisabled"
                 @click="getCode"
-              >{{getCodeText}}</el-button>
+                >{{ getCodeText }}</el-button
+              >
             </div>
           </el-col>
         </el-row>
@@ -70,7 +89,8 @@
           type="danger"
           :disabled="btndisabled"
           @click="submitForm('ruleForm')"
-        >{{activeIndex==='login'?'登陆':'注册'}}</el-button>
+          >{{ activeIndex === "login" ? "登陆" : "注册" }}</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -78,7 +98,7 @@
 
 <script>
 // 引入密码加密
-import sha1 from 'js-sha1'
+import sha1 from "js-sha1";
 import instance from "@/utils/requset.js";
 import {
   stripscript,
@@ -86,7 +106,7 @@ import {
   validateCode,
   checkPassword
 } from "@/utils/Login/index.js";
-import { getMsg, Login, register } from "@/api/login.js";
+import { getMsg, register } from "@/api/login.js";
 export default {
   data() {
     // 验证登陆邮箱
@@ -137,7 +157,7 @@ export default {
         { id: 2, text: "注册", type: "register" }
       ],
       activeIndex: "login",
-      btndisabled: true, //登陆、注册按钮禁用
+      btndisabled: false, //登陆、注册按钮禁用
       getCodeText: "获取验证码", //获取验证码文字修改
       Codedisabled: false, //获取验证码按钮禁用
       getCodeTime: null, //获取验证码按钮重新获取时间
@@ -164,7 +184,7 @@ export default {
       this.ruleForm.code = "";
       this.ruleForm.againPwd = "";
       this.btndisabled = true;
-      this.Codedisabled=false
+      this.Codedisabled = false;
       this.getCodeText = "获取验证码";
     },
     submitForm(ruleForm) {
@@ -177,22 +197,16 @@ export default {
               password: sha1(this.ruleForm.password),
               code: this.ruleForm.code
             };
-            this.$store.dispatch('login',loginInfo).then(response=>{
-              console.log(response)
-              this.$router.push({
-                path:'/control'
+            this.$store
+              .dispatch("login", loginInfo)
+              .then(response => {
+                this.$router.push({
+                  path: "/control"
+                });
               })
-            }).catch(error=>{
-              console.log(error)
-            })
-            // Login(loginInfo).then(response=>{
-            //   console.log(response)
-            //   this.$router.push({
-            //     path:'/control'
-            //   })
-            // }).catch(error=>{
-            //   console.log(error)
-            // })
+              .catch(error => {
+                console.log(error);
+              });
           } else {
             // 注册页面触发
             let registerInfo = {
@@ -249,20 +263,18 @@ export default {
     },
     // 获取验证码按钮60秒后重新获取
     timeDown(timeNumber) {
-      // console.log(timeNumber)
       if (this.getCodeTime) {
         clearInterval(this.getCodeTime);
       }
       this.getCodeTime = setInterval(() => {
         timeNumber--;
-        console.log(timeNumber);
         this.getCodeText = timeNumber + "s";
-        this.btndisabled = true;  //将登陆或注册按钮禁用
-        this.Codedisabled=true //将获取验证码按钮禁用
+
+        this.Codedisabled = true; //将获取验证码按钮禁用
         if (timeNumber == 0) {
           clearInterval(this.getCodeTime);
           this.getCodeText = "重新发送";
-          this.btndisabled = false; //将登陆或注册按钮
+
           this.Codedisabled = false; //将获取验证码按钮启用
         }
       }, 1000);
@@ -282,7 +294,7 @@ export default {
 };
 </script>
 
-<style scoped lang='less'>
+<style scoped lang="less">
 #login {
   height: 100%;
   background-color: #344a5f;
