@@ -8,7 +8,7 @@
         <div class="user-img">
           <img src="../../../assets/logo.png" alt />
           <div class="userName">
-            <span>管理员</span>
+            <span>{{ $store.state.userInfo.username }}</span>
           </div>
         </div>
 
@@ -26,12 +26,13 @@ export default {
   methods: {
     collapseStatus() {
       this.$store.commit("controlCollapse");
+      this.$store.commit("getUserInfo");
     }
   }
 };
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 #header {
   line-height: 75px;
   height: 75px;
@@ -78,7 +79,7 @@ export default {
   }
 }
 .open {
-    #header {
+  #header {
     position: fixed;
     left: 250px;
     top: 0;

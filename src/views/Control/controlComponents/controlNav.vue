@@ -15,18 +15,19 @@
       :collapse="check_isCollapse"
     >
       <!-- 一级菜单 -->
-      <template v-for="(item,index) in routers">
-        <el-submenu v-if="!item.hiddren" :key="item.id" :index="index+''">
+      <template v-for="(item, index) in routers">
+        <el-submenu v-if="!item.hiddren" :key="item.id" :index="index + ''">
           <template slot="title">
             <i :class="item.meta.icon"></i>
-            <span slot="title">{{item.meta.name}}</span>
+            <span slot="title">{{ item.meta.name }}</span>
           </template>
           <!-- 子级菜单 -->
           <el-menu-item
             :index="val.path"
-            v-for="(val,index) in item.children"
+            v-for="(val, index) in item.children"
             :key="index"
-          >{{val.meta.name}}</el-menu-item>
+            >{{ val.meta.name }}</el-menu-item
+          >
         </el-submenu>
       </template>
     </el-menu>
@@ -61,7 +62,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #nav {
   width: 250px;
   height: 100vh;

@@ -8,15 +8,16 @@
 export default {};
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 #content {
   position: fixed;
   top: 75px;
   left: 250px;
   border: 20px solid #f8f6f8;
-  padding: 30px;
-  width: 75%;
-  height: 75%;
+  padding: 20px;
+  width: 82%;
+  height: 88%;
+  box-sizing: border-box;
 }
 .open {
   #content {
