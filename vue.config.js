@@ -1,35 +1,79 @@
+const path = require("path");
 module.exports = {
-  /* 部署生产环境和开发环境下的URL：可对当前环境进行区分，baseUrl 从 Vue CLI 3.3 起已弃用，要使用publicPath */
-  /* baseUrl: process.env.NODE_ENV === 'production' ? './' : '/' */
-  publicPath: process.env.NODE_ENV === 'production' ? '/public/' : './',
-  /* 输出文件目录：在npm run build时，生成文件的目录名称 */
-  outputDir: process.env.NODE_ENV === 'production' ? 'dist' : 'devdist',
-  /* 放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录 */
-  assetsDir: "assets",
-  /* 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度 */
+  // 基本路径
+  publicPath: process.env.NODE_ENV === "production" ? "" : "/",
+  // 输出文件目录
+  outputDir: process.env.NODE_ENV === "production" ? "dist" : "devdist",
+  // eslint-loader 是否在保存的时候检查
+  lintOnSave: false,
+  /**
+   * webpack配置,see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+   **/
+  chainWebpack: config => {},
+  configureWebpack: config => {
+    // config.resolve = { // 配置解析别名
+    //   extensions: ['.js', '.json', '.vue'],
+    //   alias: {
+    //     '@': path.resolve(__dirname, './src'),
+    //     'public': path.resolve(__dirname, './public'),
+    //     'components': path.resolve(__dirname, './src/components'),
+    //     'common': path.resolve(__dirname, './src/common'),
+    //     'api': path.resolve(__dirname, './src/api'),
+    //     'views': path.resolve(__dirname, './src/views'),
+    //     'data': path.resolve(__dirname, './src/data')
+    //   }
+    // }
+  },
+  // 生产环境是否生成 sourceMap 文件
   productionSourceMap: false,
-  /* 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存，你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变) */
-  filenameHashing: false,
-  /* 代码保存时进行eslint检测 */
-  lintOnSave: true,
-  /* webpack-dev-server 相关配置 */
+  // css相关配置
+  css: {
+    // 是否使用css分离插件 ExtractTextPlugin
+    extract: true,
+    // 开启 CSS source maps?
+    sourceMap: false,
+    // css预设器配置项
+    loaderOptions: {
+      // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
+    },
+    // 启用 CSS modules for all css / pre-processor files.
+    modules: false
+  },
+  // use thread-loader for babel & TS in production build
+  // enabled by default if the machine has more than 1 cores
+  parallel: require("os").cpus().length > 1,
+  /**
+   *  PWA 插件相关配置,see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
+   */
+  pwa: {},
+  // webpack-dev-server 相关配置
   devServer: {
-    /* 自动打开浏览器 */
-    open: true,
-    /* 设置为0.0.0.0则所有的地址均能访问 */
-    host: '0.0.0.0',
-    port: 8080,
-    https: false,
+    open: true, // 编译完成是否打开网页
+    host: "0.0.0.0", // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
+    port: 8080, // 访问端口
+    https: false, // 编译失败时刷新页面
+    hot: true, // 开启热加载
     hotOnly: false,
-    /* 使用代理 */
+    proxy: null, // 设置代理
+    overlay: {
+      // 全屏模式下是否显示脚本错误
+      warnings: true,
+      errors: true
+    },
+    before: app => {},
     proxy: {
-      '/devapi': {
-        target: 'http://www.web-jshtml.cn/productapi', // 你请求的第三方接口
+      "/devapi": {
+        target: "http://www.web-jshtml.cn/dependenciesapi/token", // 你请求的第三方接口
         changeOrigin: true, // 在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问题
-        pathRewrite: {  // 路径重写，
-          '^/devapi': ''  // 替换target中的请求地址，也就是说以后你在请求http://api.douban.com/v2/XXXXX这个地址的时候直接写成/api即可。
+        pathRewrite: {
+          // 路径重写，
+          "^/devapi": "" // 替换target中的请求地址，也就是说以后你在请求http://api.douban.com/v2/XXXXX这个地址的时候直接写成/api即可。
         }
       }
     }
-  }
-}
+  },
+  /**
+   * 第三方插件配置
+   */
+  pluginOptions: {}
+};
