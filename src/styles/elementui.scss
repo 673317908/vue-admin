@@ -1,4 +1,4 @@
-// 一级菜单样式
+// 导航栏一级菜单样式
 ul.el-menu {
   border-right: none;
 }
@@ -7,7 +7,7 @@ li.el-submenu {
     background-color: rgb(42, 59, 76) !important;
   }
 }
-// 子级菜单样式
+// 导航栏子级菜单样式
 .el-submenu .el-menu-item {
   font-size: 14px;
   &.is-active {
@@ -15,9 +15,53 @@ li.el-submenu {
   }
 }
 
+// 信息列表表格样式
+.el-table td, .el-table th {
+  text-align: center !important;
+}
+.el-table th {
+  font-weight: 700 !important;
+}
+.el-table td{
+  font-size: 14px !important;
+}
+
+// 导航栏关闭后样式
 .close {
   ul.el-menu {
     width: 64px;
     -webkit-transition: all 1s ease-in-out 0s;
   }
 }
+
+// 信息列表选择器样式
+@mixin labelDom ($align,$width,$lin-height:"normal"){
+  label {
+  float: left;
+  line-height: $lin-height+px;
+  width: $width+px;
+  text-align: $align;
+  }
+  .warp_content{
+    margin-left: $width+px;
+  }
+}
+
+// 对话框
+.el-dialog__body{
+  padding:30px 47px !important;
+}
+.el-form {
+  .el-form-item:last-child{
+    margin-bottom: 0 !important;
+  }
+}
+.el-dialog__footer {
+  text-align: center !important;
+  padding-bottom: 50px !important;
+  .el-button {
+    width: 150px !important;
+    margin-left: 0 11px !important;
+  }
+}
+
