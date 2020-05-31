@@ -1,5 +1,6 @@
 import { Message } from "element-ui";
 import axios from "axios";
+import { getToken, getUserName } from "@/utils/befend/api.js";
 // const axios = axios.create({
 //   baseUrl: BASEURL,
 //   timeout: 1000
@@ -10,6 +11,9 @@ axios.defaults.baseURL = process.env.NODE_ENV === "production" ? "" : "/devapi";
 axios.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
+    console.log(config);
+    config.headers["token"] = getToken();
+    config.headers["userName"] = getUserName();
     return config;
   },
   function(error) {
