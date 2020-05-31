@@ -8,6 +8,7 @@ import "@/router/befend.js";
 // 引入elementui
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import "./assets/iconfont/iconfont.css";
 // 重置样式
 import "./styles/reset.css";
 // 引入elementui修改样式
