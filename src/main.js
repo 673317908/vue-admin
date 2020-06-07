@@ -13,6 +13,7 @@ import "./assets/iconfont/iconfont.css";
 import "./styles/reset.css";
 // 引入elementui修改样式
 import "./styles/elementui.scss";
+// 弹框
 import global from "@/utils/global.js";
 Vue.use(global);
 Vue.use(axios);
