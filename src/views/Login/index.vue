@@ -235,7 +235,6 @@ export default {
     },
     // 获取验证码
     getCode() {
-      console.log(this.activeIndex);
       let setCode = { username: this.ruleForm.email, model: this.activeIndex };
       if (this.ruleForm.email === "") {
         this.$message({

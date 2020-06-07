@@ -11,7 +11,6 @@ axios.defaults.baseURL = process.env.NODE_ENV === "production" ? "" : "/devapi";
 axios.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
-    console.log(config);
     config.headers["tokey"] = getToken();
     config.headers["userName"] = getUserName();
     return config;

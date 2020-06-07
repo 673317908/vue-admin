@@ -51,7 +51,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$router.options.routes);
     this.routers = this.$router.options.routes;
   },
   computed: {

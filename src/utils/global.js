@@ -10,10 +10,6 @@ export default {
       })
         .then(() => {
           params.fn();
-          // this.$message({
-          //   type: "success",
-          //   message: "删除成功!"
-          // });
         })
         .catch(() => {
           this.$message({
