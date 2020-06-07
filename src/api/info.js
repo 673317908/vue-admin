@@ -7,12 +7,47 @@ export function getTitle(data) {
     data
   });
 }
-
 // 获取信息分类
+export function getCategoryData(data) {
+  return axios.request({
+    method: "post",
+    url: "/news/getCategory/",
+    data
+  });
+}
+
+// 获取信息分类(包含子项)
 export function getCategoryAll(data) {
   return axios.request({
     method: "post",
     url: "/news/getCategoryAll/",
+    data
+  });
+}
+
+// 获取信息列表
+export function getList(data) {
+  return axios.request({
+    method: "post",
+    url: "/news/getList/",
+    data
+  });
+}
+
+// 删除信息
+export function deleteData(data) {
+  return axios.request({
+    method: "post",
+    url: "/news/deleteInfo/",
+    data
+  });
+}
+
+// 添加分类信息
+export function addCategoryData(data) {
+  return axios.request({
+    method: "post",
+    url: "/news/add/",
     data
   });
 }
