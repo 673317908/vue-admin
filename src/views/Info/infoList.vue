@@ -4,7 +4,7 @@
     <el-row :gutter="16">
       <el-col :span="4">
         <div class="label_wrap category">
-          <label for>类型:</label>
+          <label for>分类:</label>
           <div class="warp_content">
             <el-select
               v-model="categoryValue"
@@ -12,10 +12,10 @@
               style="width:100%;"
             >
               <el-option
-                v-for="item in options"
-                :key="item.value"
+                v-for="item in options.data"
+                :key="item.id"
                 :label="item.label"
-                :value="item.value"
+                :value="item.category_name"
               ></el-option>
             </el-select>
           </div>
@@ -75,15 +75,27 @@
     </el-row>
 
     <!-- 表格 -->
-    <el-table :data="tableData" border style="width: 100%;margin-top:20px;">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%;margin-top:20px;"
+      v-loading="loading"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="title" label="标题" width="500"></el-table-column>
       <el-table-column
         prop="category"
         label="类型"
         width="130"
+        :formatter="toCotegory"
       ></el-table-column>
-      <el-table-column prop="date" label="日期" width="107"></el-table-column>
+      <el-table-column
+        prop="createDate"
+        label="日期"
+        width="107"
+        :formatter="toDate"
+      ></el-table-column>
       <el-table-column
         prop="admin"
         label="管理员"
@@ -91,7 +103,7 @@
       ></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem"
+          <el-button type="danger" size="mini" @click="deleteItem(scope)"
             >删除</el-button
           >
           <el-button type="success" size="mini">编辑</el-button>
@@ -115,7 +127,7 @@
           :page-sizes="[2, 3, 4, 5]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="total"
           >></el-pagination
         >
       </el-col>
@@ -128,39 +140,20 @@
 
 <script>
 import DiaLog from "./components/dialog";
+import { getCategoryData, getList, deleteData } from "@/api/info";
+import { timestampToTime } from "@/utils/date";
 export default {
   components: {
     DiaLog
   },
   data() {
     return {
-      dialogShow: false, // 对话框
+      dialogShow: false, // 对话框显示隐藏
       dateValue: "", // 日期选择框
       searchValue: "ID", //关键字选择框
       categoryValue: "", //类型选择框
       currentPage4: 1,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
+      options: [], // 分类数据
       searchOptions: [
         {
           value: "id",
@@ -170,38 +163,26 @@ export default {
           value: "title",
           label: "标题"
         }
-      ],
-      tableData: [
-        {
-          title: "纽约市长白思豪宣布退出总统竞选 特朗普发推特回应",
-          category: "国内信息",
-          date: "2016-05-02 19:31:31",
-          admin: "王小虎"
-        },
-        {
-          title: "纽约市长白思豪宣布退出总统竞选 特朗普发推特回应",
-          category: "国内信息",
-          date: "2016-05-02 19:31:31",
-          admin: "王小虎"
-        },
-        {
-          title: "纽约市长白思豪宣布退出总统竞选 特朗普发推特回应",
-          category: "国内信息",
-          date: "2016-05-02 19:31:31",
-          admin: "王小虎"
-        },
-        {
-          title: "纽约市长白思豪宣布退出总统竞选 特朗普发推特回应",
-          category: "国内信息",
-          date: "2016-05-02 19:31:31",
-          admin: "王小虎"
-        }
-      ]
+      ], // 搜索选择框
+      tableData: [], // 列表数据
+      pageNumber: 1, // 当前页码
+      pageSize: 2, // 每页条数
+      total: 0, // 总条数
+      loading: false, // 表格加载提示
+      deleteId: ""
     };
   },
   methods: {
-    handleSizeChange() {},
-    handleCurrentChange() {},
+    // 切换每页条数
+    handleSizeChange(value) {
+      this.pageSize = value;
+      this.getCategoryList();
+    },
+    // 下一页
+    handleCurrentChange(value) {
+      this.pageNumber = value;
+      this.getCategoryList();
+    },
     // 打开对话框
     addList() {
       this.dialogShow = true;
@@ -211,21 +192,86 @@ export default {
       this.dialogShow = false;
     },
     //删除选中数据
-    deleteItem() {
-      this.confirm({
-        tipContent: "此操作将永久删除该文件, 是否继续?",
-        fn: this.consoleText
+    deleteItem(scope) {
+      // console.log(scope.row.id);
+      this.$confirm(
+        "是否删除选中数据，此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        deleteData({ id: [scope.row.id] }).then(res => {
+          this.getCategoryList();
+        });
       });
+    },
+    // 获取分类选项数据
+    getCategory() {
+      getCategoryData().then(res => {
+        this.options = res.data.data;
+      });
+    },
+    // 获取分类列表数据
+    getCategoryList() {
+      let requsetData = {
+        pageNumber: this.pageNumber,
+        pageSize: this.pageSize
+      };
+      this.loading = true;
+      getList(requsetData).then(res => {
+        this.tableData = res.data.data.data;
+        this.total = res.data.data.total;
+        this.loading = false;
+      });
+    },
+    // 时间转换
+    toDate(row) {
+      return timestampToTime(row.createDate);
+    },
+    // 根据id匹配类型名
+    toCotegory(row) {
+      let categoryId = row.categoryId;
+      let categoryData = this.options.data.filter(
+        item => item.id == categoryId
+      )[0];
+      return categoryData.category_name;
+    },
+    // 选择框事件
+    handleSelectionChange(value) {
+      let id = value.map(item => item.id);
+      this.deleteId = id;
     },
     // 批量删除
     deleteAll() {
-      this.confirm({
-        tipContent: "是否删除选中数据，此操作将永久删除该文件, 是否继续?"
+      if (!this.deleteId || this.deleteId.length == 0) {
+        this.$message({
+          message: "请选择需要删除的数据",
+          type: "error"
+        });
+        return false;
+      }
+      this.$confirm(
+        "是否删除选中数据，此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        deleteData({ id: this.deleteId }).then(res => {
+          this.getCategoryList();
+          this.deleteId = "";
+        });
       });
-    },
-    consoleText() {
-      console.log(111);
     }
+  },
+  mounted() {
+    this.getCategory();
+    this.getCategoryList();
   }
 };
 </script>
