@@ -52,6 +52,15 @@ export function addCategoryData(data) {
   });
 }
 
+// 编辑分类信息
+export function editCategoryData(data){
+  return axios.request({
+    method:"post",
+    url:"/news/editInfo/",
+    data
+  })
+}
+
 // 删除分类
 export function DeleteCategory(data) {
   return axios.request({

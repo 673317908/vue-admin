@@ -2,7 +2,7 @@
   <div>
     <el-dialog
       title="新增"
-      :visible.sync="flagValue"
+      :visible.sync="editFlag"
       :append-to-body="true"
       @close="close"
       width="580px"
@@ -23,19 +23,26 @@
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="概况" :label-width="formLabelWidth">
-          <el-input type="textarea" placeholder="请输入内容" autocomplete="off" v-model="form.content"></el-input>
+          <el-input
+            type="textarea"
+            placeholder="请输入内容"
+            autocomplete="off"
+            v-model="form.content"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="danger" @click="addCategory" :loading="btnStatus">确 定</el-button>
+        <el-button type="danger" @click="addCategory" :loading="btnStatus"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getCategoryData, addCategoryData } from "@/api/info";
+import { getCategoryData, editCategoryData } from "@/api/info";
 export default {
   props: {
     flag: {
@@ -46,7 +53,7 @@ export default {
   data() {
     return {
       formLabelWidth: "70px",
-      flagValue: false,
+      editFlag: false,
       form: {
         title: "",
         category: "",
@@ -60,13 +67,13 @@ export default {
   watch: {
     flag: {
       handler(newValue, oldValue) {
-        this.flagValue = newValue;
+        this.editFlag = newValue;
       }
     }
   },
   methods: {
     close() {
-      this.$emit("showValue", false);
+      this.$emit("showEdit", false);
     },
     // 获取分类数据
     getCategory() {
@@ -82,28 +89,27 @@ export default {
         content: this.form.content
       };
       this.btnStatus = true;
-      addCategoryData(setData)
-        .then(res => {
-          this.btnStatus = false;
-          this.form.category = "";
-          this.form.title = "";
-          this.form.content = "";
-          this.flagValue = false;
-          this.$message({
-            message: res.data.message,
-            type: "success"
-          });
-        })
-        .catch(error => {
-          this.btnStatus = false;
+      editCategoryData(setData).then(res => {
+        this.btnStatus = false;
+        this.form.category = "";
+        this.form.title = "";
+        this.form.content = "";
+        this.editFlag = false;
+        getCategoryData()
+        this.$message({
+          message: res.data.message,
+          type: "success"
         });
+      }).catch(error=>{
+          this.btnStatus = false;
+      })
     },
     // 取消添加
     cancel() {
       this.form.category = "";
       this.form.title = "";
       this.form.content = "";
-      this.flagValue = false;
+      this.editFlag = false;
     }
   }
 };

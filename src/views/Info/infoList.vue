@@ -6,11 +6,7 @@
         <div class="label_wrap category">
           <label for>分类:</label>
           <div class="warp_content">
-            <el-select
-              v-model="categoryValue"
-              placeholder="请选择"
-              style="width:100%;"
-            >
+            <el-select v-model="categoryValue" placeholder="请选择" style="width:100%;">
               <el-option
                 v-for="item in options.data"
                 :key="item.id"
@@ -32,6 +28,8 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               style="width:100%;"
+              format="yyyy-MM-DD hh:mm:ss"
+              value-format="yyyy-MM-DD hh:mm:ss"
             ></el-date-picker>
           </div>
         </div>
@@ -40,11 +38,7 @@
         <div class="label_wrap key_word">
           <label for>关键字:</label>
           <div class="warp_content">
-            <el-select
-              v-model="searchValue"
-              placeholder="请选择"
-              style="width:100%;"
-            >
+            <el-select v-model="selectValue" placeholder="请选择" style="width:100%;">
               <el-option
                 v-for="item in searchOptions"
                 :key="item.value"
@@ -56,21 +50,16 @@
         </div>
       </el-col>
       <el-col :span="3">
-        <el-input placeholder="请输入关键字" style="width:100%;"></el-input>
+        <el-input placeholder="请输入关键字" style="width:100%;" v-model="searchValue"></el-input>
       </el-col>
       <el-col :span="2">
-        <el-button type="danger">搜索</el-button>
+        <el-button type="danger" @click="searchData">搜索</el-button>
       </el-col>
       <el-col :span="2">
         <span style="color:#FFF;">1</span>
       </el-col>
       <el-col :span="2">
-        <el-button
-          type="danger"
-          style="width:100%;float:right;"
-          @click="addList"
-          >新增</el-button
-        >
+        <el-button type="danger" style="width:100%;float:right;" @click="addList">新增</el-button>
       </el-col>
     </el-row>
 
@@ -84,29 +73,13 @@
     >
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="title" label="标题" width="500"></el-table-column>
-      <el-table-column
-        prop="category"
-        label="类型"
-        width="130"
-        :formatter="toCotegory"
-      ></el-table-column>
-      <el-table-column
-        prop="createDate"
-        label="日期"
-        width="107"
-        :formatter="toDate"
-      ></el-table-column>
-      <el-table-column
-        prop="admin"
-        label="管理员"
-        width="110"
-      ></el-table-column>
+      <el-table-column prop="category" label="类型" width="130" :formatter="toCotegory"></el-table-column>
+      <el-table-column prop="createDate" label="日期" width="107" :formatter="toDate"></el-table-column>
+      <el-table-column prop="admin" label="管理员" width="110"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem(scope)"
-            >删除</el-button
-          >
-          <el-button type="success" size="mini">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope)">删除</el-button>
+          <el-button type="success" size="mini" @click="editList">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,9 +87,7 @@
     <!-- 分页、批量删除 -->
     <el-row>
       <el-col :span="12">
-        <el-button style="margin-top:36px;" @click="deleteAll"
-          >批量删除</el-button
-        >
+        <el-button style="margin-top:36px;" @click="deleteAll">批量删除</el-button>
       </el-col>
       <el-col :span="12">
         <el-pagination
@@ -128,30 +99,35 @@
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-          >></el-pagination
-        >
+        >></el-pagination>
       </el-col>
     </el-row>
 
     <!-- 对话框 -->
     <DiaLog :flag="dialogShow" @showValue="showValue" />
+
+    <!-- 编辑框 -->
+    <EditDiaLog :flag="editdialog" @showEdit="showEdit"/>
   </div>
 </template>
 
 <script>
 import DiaLog from "./components/dialog";
+import EditDiaLog from "./components/editDialog";
 import { getCategoryData, getList, deleteData } from "@/api/info";
 import { timestampToTime } from "@/utils/date";
 export default {
   components: {
-    DiaLog
+    DiaLog,EditDiaLog
   },
   data() {
     return {
       dialogShow: false, // 对话框显示隐藏
+      editdialog:false, // 编辑框显示隐藏
       dateValue: "", // 日期选择框
-      searchValue: "ID", //关键字选择框
+      selectValue: "ID", // 关键字选择框
       categoryValue: "", //类型选择框
+      searchValue: "", // 搜索输入框
       currentPage4: 1,
       options: [], // 分类数据
       searchOptions: [
@@ -191,9 +167,16 @@ export default {
     showValue() {
       this.dialogShow = false;
     },
+    // 打开编辑框
+    editList(){
+      this.editdialog=true
+    },
+    // 关闭编辑框
+    showEdit(){
+      this.editdialog=false
+    },
     //删除选中数据
     deleteItem(scope) {
-      // console.log(scope.row.id);
       this.$confirm(
         "是否删除选中数据，此操作将永久删除该文件, 是否继续?",
         "提示",
@@ -267,6 +250,35 @@ export default {
           this.deleteId = "";
         });
       });
+    },
+    // 处理搜索数据
+    fomatSearchData() {
+      let requsetData = {};
+      //  判断分类数据
+      if (!this.categoryId) {
+        requsetData.categoryValue = this.categoryValue;
+      }
+      //  判断时间数据  
+      if (this.dateValue.length > 0) {
+        (requsetData.startTiem = this.dateValue[0]),
+          (requsetData.endTime = this.dateValue[1]);
+      }
+      // 判断关键字选择
+      requsetData[this.selectValue] = this.searchValue;
+      // 判断页码
+      if (this.pageNumber && this.pageSize) {
+        requsetData.pageNumber = this.pageNumber;
+        requsetData.pageSize = this.pageSize;
+      }
+      return requsetData
+    },
+    // 搜索
+    searchData() {
+      let requsetData = this.fomatSearchData();
+      console.log(requsetData)
+      getList(requsetData).then(res=>{
+        this.tableData = res.data.data.data;
+      })
     }
   },
   mounted() {
