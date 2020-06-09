@@ -31,7 +31,7 @@
                   size="mini"
                   type="success"
                   round
-                  @click="addChildrenInput"
+                  @click="addChildrenInput(item.category_name)"
                   >添加子项</el-button
                 >
                 <el-button size="mini" round @click="deleteCategory(item.id)"
@@ -111,9 +111,12 @@ export default {
       this.firstInputStatus = false;
       this.btndisabledStatus = false;
     },
-    // 添加一级级输入框
-    addChildrenInput() {
+    // 添加子项输入框
+    addChildrenInput(category_name) {
+      this.form.firstTitle=category_name
+      this.firstInputStatus=false
       this.childrenInputStatus = true;
+      this.btndisabledStatus = false;
     },
     // 添加分类名称
     setTitle() {
