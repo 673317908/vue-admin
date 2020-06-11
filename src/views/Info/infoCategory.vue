@@ -42,7 +42,7 @@
                 {{ item2.category_name }}
                 <div class="button_gourp">
                   <el-button size="mini" type="danger" round>编辑</el-button>
-                  <el-button size="mini" round>删除</el-button>
+                  <el-button size="mini" round @click="deleteChildrenCategory(item2.id)">删除</el-button>
                 </div>
               </li>
             </ul>
@@ -114,23 +114,49 @@ export default {
       this.firstInputStatus = false;
       this.childrenInputStatus = true;
       this.btndisabledStatus = false;
-      this.btntype= value.type
+      this.btntype = value.type;
     },
     // 添加子项数据
     addChildrenData() {
-      let resdata={categoryName:this.form.childrenTitle,parentId:this.addChildrenList.parentId}
-      addChildrenCategory(resdata).then(res=>{
-         this.$message({
-            type: "success",
-            message: res.data.message
-          });
-        this.firstInputStatus=true
-         this.btnStatus=false
-         this.childrenInputStatus=false
-         this.form.firstTitle=""
-         this.form.childrenTitle=""
-         this.getCategoryList()
+      let resdata = {
+        categoryName: this.form.childrenTitle,
+        parentId: this.addChildrenList.parentId
+      };
+      addChildrenCategory(resdata).then(res => {
+        this.$message({
+          type: "success",
+          message: res.data.message
+        });
+        this.firstInputStatus = true;
+        this.btnStatus = false;
+        this.childrenInputStatus = false;
+        this.form.firstTitle = "";
+        this.form.childrenTitle = "";
+        this.getCategoryList();
+      });
+    },
+    // 删除子项
+    deleteChildrenCategory(id) {
+      this.$confirm("此操作将永久删除该分类, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
+        .then(() => {
+          DeleteCategory({ categoryId: id }).then(res => {
+            this.$message({
+              message: res.data.message,
+              type: "success"
+            });
+            this.getCategoryList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     // 添加分类名称
     setTitle() {
@@ -145,7 +171,7 @@ export default {
       }
       // 添加子项
       if (this.btntype == "addChildren") {
-        this.addChildrenData()
+        this.addChildrenData();
       }
     },
     // 获取分类数据
@@ -157,7 +183,7 @@ export default {
     // 删除分类
     deleteCategory(id) {
       var data = { categoryId: id };
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该分类, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
