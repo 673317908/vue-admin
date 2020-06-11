@@ -1,8 +1,6 @@
 <template>
   <div>
-    <el-button type="danger" @click="addFirstInput({ type: 'addCategory' })"
-      >添加一级分类</el-button
-    >
+    <el-button type="danger" @click="addFirstInput({ type: 'addCategory' })">添加一级分类</el-button>
     <hr
       style="margin-left:-20px;margin-right:-20px;margin-top:20px;margin-bottom:20rpx;background-color: #c9c9c9;"
     />
@@ -22,21 +20,21 @@
                     editCategory({
                       categoryName: item.category_name,
                       categoryID: item.id,
-                      type: 'firstCategory'
+                      type: 'editFirstCategory'
                     })
                   "
-                  >编辑</el-button
-                >
+                >编辑</el-button>
                 <el-button
                   size="mini"
                   type="success"
                   round
-                  @click="addChildrenInput(item.category_name)"
-                  >添加子项</el-button
-                >
-                <el-button size="mini" round @click="deleteCategory(item.id)"
-                  >删除</el-button
-                >
+                  @click="addChildrenInput({
+                      categoryName: item.category_name,
+                      parentId: item.id,
+                      type: 'addChildren'
+                    })"
+                >添加子项</el-button>
+                <el-button size="mini" round @click="deleteCategory(item.id)">删除</el-button>
               </div>
             </h4>
             <ul v-if="item.children">
@@ -55,10 +53,7 @@
         <h4 class="meun_title">一级分类编辑</h4>
         <el-form label-width="142px" :model="form" class="w410">
           <el-form-item label="一级分类名称">
-            <el-input
-              v-model="form.firstTitle"
-              :disabled="firstInputStatus"
-            ></el-input>
+            <el-input v-model="form.firstTitle" :disabled="firstInputStatus"></el-input>
           </el-form-item>
           <el-form-item label="子级分类名称" v-if="childrenInputStatus">
             <el-input v-model="form.childrenTitle"></el-input>
@@ -66,11 +61,10 @@
           <el-form-item>
             <el-button
               type="danger"
-              @click="setTitle({ type: 'addCategory' })"
+              @click="setTitle"
               :loading="btnStatus"
               :disabled="btndisabledStatus"
-              >确定</el-button
-            >
+            >确定</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -83,7 +77,8 @@ import {
   getTitle,
   getCategoryAll,
   DeleteCategory,
-  EditCategory
+  EditCategory,
+  addChildrenCategory
 } from "@/api/info.js";
 export default {
   data() {
@@ -101,7 +96,8 @@ export default {
       form: {
         firstTitle: "",
         childrenTitle: ""
-      }
+      },
+      addChildrenList: {} // 子项传输数据
     };
   },
   methods: {
@@ -112,11 +108,29 @@ export default {
       this.btndisabledStatus = false;
     },
     // 添加子项输入框
-    addChildrenInput(category_name) {
-      this.form.firstTitle=category_name
-      this.firstInputStatus=false
+    addChildrenInput(value) {
+      this.addChildrenList = value;
+      this.form.firstTitle = value.categoryName;
+      this.firstInputStatus = false;
       this.childrenInputStatus = true;
       this.btndisabledStatus = false;
+      this.btntype= value.type
+    },
+    // 添加子项数据
+    addChildrenData() {
+      let resdata={categoryName:this.form.childrenTitle,parentId:this.addChildrenList.parentId}
+      addChildrenCategory(resdata).then(res=>{
+         this.$message({
+            type: "success",
+            message: res.data.message
+          });
+        this.firstInputStatus=true
+         this.btnStatus=false
+         this.childrenInputStatus=false
+         this.form.firstTitle=""
+         this.form.childrenTitle=""
+         this.getCategoryList()
+      })
     },
     // 添加分类名称
     setTitle() {
@@ -126,14 +140,17 @@ export default {
         this.addCategoryTitle();
       }
       // 修改分类名
-      if (this.btntype == "firstCategory") {
+      if (this.btntype == "editFirstCategory") {
         this.editCategoryTitle();
+      }
+      // 添加子项
+      if (this.btntype == "addChildren") {
+        this.addChildrenData()
       }
     },
     // 获取分类数据
     getCategoryList() {
       getCategoryAll().then(res => {
-        console.log(res.data);
         this.categoryList = res.data.data;
       });
     },
