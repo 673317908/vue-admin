@@ -78,3 +78,12 @@ export function EditCategory(data) {
     data
   });
 }
+
+// 信息分类添加子级
+export function addChildrenCategory(data){
+  return axios.request({
+    method:"post",
+    url:"/news/addChildrenCategory/",
+    data
+  })
+}
