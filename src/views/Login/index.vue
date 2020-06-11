@@ -205,7 +205,6 @@ export default {
                 });
               })
               .catch(error => {
-                console.log(error);
               });
           } else {
             // 注册页面触发
@@ -220,7 +219,6 @@ export default {
                 message: data.message,
                 type: "success"
               });
-              console.log(response);
               if (data.resCode === 0) {
                 // 注册成功恢复按钮文字和跳转到登陆
                 this.resetBtn();
@@ -228,7 +226,6 @@ export default {
             });
           }
         } else {
-          console.log("error submit!!");
           return false;
         }
       });

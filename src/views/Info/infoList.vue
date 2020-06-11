@@ -275,7 +275,6 @@ export default {
     // 搜索
     searchData() {
       let requsetData = this.fomatSearchData();
-      console.log(requsetData)
       getList(requsetData).then(res=>{
         this.tableData = res.data.data.data;
       })
