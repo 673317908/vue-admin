@@ -41,7 +41,16 @@
               <li v-for="item2 in item.children" :key="item2.id">
                 {{ item2.category_name }}
                 <div class="button_gourp">
-                  <el-button size="mini" type="danger" round>编辑</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    round
+                    @click="editChildrenCategory({
+                      categoryName: item.category_name,
+                      childrenName:item2.category_name,
+                      id: item2.id,
+                      type: 'editChildren'})"
+                  >编辑</el-button>
                   <el-button size="mini" round @click="deleteChildrenCategory(item2.id)">删除</el-button>
                 </div>
               </li>
@@ -122,6 +131,7 @@ export default {
         categoryName: this.form.childrenTitle,
         parentId: this.addChildrenList.parentId
       };
+      this.btnStatus = true;
       addChildrenCategory(resdata).then(res => {
         this.$message({
           type: "success",
@@ -158,7 +168,35 @@ export default {
           });
         });
     },
-    // 添加分类名称
+    // 编辑子项
+    editChildrenCategory(value) {
+      this.firstInputStatus = false;
+      this.form.firstTitle = value.categoryName;
+      this.childrenInputStatus = true;
+      this.form.childrenTitle = value.childrenName;
+      this.btndisabledStatus = false;
+      this.btntype = value.type;
+      this.editData.id = value.id;
+    },
+    editChildrenCategoryTitle() {
+      EditCategory({
+        id: this.editData.id,
+        categoryName: this.form.childrenTitle
+      }).then(res => {
+        this.$message({
+          message: res.data.message,
+          type: "success"
+        });
+        this.firstInputStatus = true;
+        this.form.firstTitle = "";
+        this.childrenInputStatus = false;
+        this.form.childrenTitle = "";
+        this.btndisabledStatus = true;
+        this.btnStatus=false
+        this.getCategoryList();
+      });
+    },
+    // 确定按钮事件
     setTitle() {
       this.btnStatus = true;
       // 添加分类名称
@@ -173,6 +211,10 @@ export default {
       if (this.btntype == "addChildren") {
         this.addChildrenData();
       }
+      // 编辑子项
+      if (this.btntype == "editChildren") {
+        this.editChildrenCategoryTitle();
+      }
     },
     // 获取分类数据
     getCategoryList() {
@@ -180,7 +222,7 @@ export default {
         this.categoryList = res.data.data;
       });
     },
-    // 删除分类
+    // 删除一级分类
     deleteCategory(id) {
       var data = { categoryId: id };
       this.$confirm("此操作将永久删除该分类, 是否继续?", "提示", {
@@ -221,27 +263,6 @@ export default {
       this.firstInputStatus = false;
       this.btndisabledStatus = false;
     },
-    // 添加分类名称
-    addCategoryTitle() {
-      if (this.form.firstTitle == "") {
-        this.$message({
-          message: "内容不能为空"
-        });
-        this.btnStatus = false;
-      } else {
-        getTitle({ categoryName: this.form.firstTitle }).then(res => {
-          if (res.data.resCode == 0) {
-            this.$message({
-              message: res.data.message,
-              type: "success"
-            });
-          }
-          this.categoryList.push(res.data.data);
-          this.btnInputStatus();
-        });
-      }
-    },
-    // 修改分类名
     editCategoryTitle() {
       let data = {
         categoryName: this.form.firstTitle,
@@ -267,6 +288,26 @@ export default {
         // this.editData.category_name = resData.categoryName;
         this.btnInputStatus();
       });
+    },
+    // 添加一级分类名称
+    addCategoryTitle() {
+      if (this.form.firstTitle == "") {
+        this.$message({
+          message: "内容不能为空"
+        });
+        this.btnStatus = false;
+      } else {
+        getTitle({ categoryName: this.form.firstTitle }).then(res => {
+          if (res.data.resCode == 0) {
+            this.$message({
+              message: res.data.message,
+              type: "success"
+            });
+          }
+          this.categoryList.push(res.data.data);
+          this.btnInputStatus();
+        });
+      }
     },
     // 恢复输入框和按钮默认值
     btnInputStatus() {
