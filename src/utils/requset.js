@@ -25,9 +25,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   function(response) {
     // 对响应数据做点什么
-    // console.log(response)
     let data = response.data;
-    console.log(data);
     if (data.resCode != 0) {
       Message({
         message: data.message,

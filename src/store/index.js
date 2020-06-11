@@ -15,13 +15,11 @@ export default new Vuex.Store({
   mutations: {
     // 改变首页布局
     controlCollapse(state) {
-      // console.log(state);
       this.state.isCollapse = !this.state.isCollapse;
       sessionStorage.setItem(
         "isCollapse",
         JSON.stringify(this.state.isCollapse)
       );
-      console.log(this.state.isCollapse);
     }
   },
   actions: {
@@ -30,7 +28,6 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         Login(loginInfo)
           .then(response => {
-            // console.log(response);
             let loginToken = response.data.data;
             let userName = loginToken.username;
             sessionStorage.setItem("userName", userName);
