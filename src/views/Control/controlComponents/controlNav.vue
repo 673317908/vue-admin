@@ -22,12 +22,9 @@
             <span slot="title">{{ item.meta.name }}</span>
           </template>
           <!-- 子级菜单 -->
-          <el-menu-item
-            :index="val.path"
-            v-for="(val, index) in item.children"
-            :key="index"
-            >{{ val.meta.name }}</el-menu-item
-          >
+          <template v-for="(val, index) in item.children">
+            <el-menu-item :index="val.path" v-if="!val.hiddren" :key="index">{{ val.meta.name }}</el-menu-item>
+          </template>
         </el-submenu>
       </template>
     </el-menu>
