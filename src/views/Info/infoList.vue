@@ -9,9 +9,9 @@
             <el-select v-model="categoryValue" placeholder="请选择" style="width:100%;">
               <el-option
                 v-for="item in options.data"
+                :label="item.category_name"
                 :key="item.id"
-                :label="item.label"
-                :value="item.category_name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </div>
@@ -74,7 +74,7 @@
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="title" label="标题" width="500"></el-table-column>
       <el-table-column prop="category" label="类型" width="130" :formatter="toCotegory"></el-table-column>
-      <el-table-column prop="createDate" label="日期" width="107" :formatter="toDate"></el-table-column>
+      <el-table-column prop="createDate" label="日期" width="170" :formatter="toDate"></el-table-column>
       <el-table-column prop="admin" label="管理员" width="110"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -217,9 +217,7 @@ export default {
     // 根据id匹配类型名
     toCotegory(row) {
       let categoryId = row.categoryId;
-      let categoryData = this.options.data.filter(
-        item => item.id == categoryId
-      )[0];
+      let categoryData = this.options.data.filter(item =>item.id == categoryId)[0];
       return categoryData.category_name;
     },
     // 选择框事件
