@@ -72,14 +72,15 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column prop="title" label="标题" width="500"></el-table-column>
+      <el-table-column prop="title" label="标题" width="700"></el-table-column>
       <el-table-column prop="category" label="类型" width="130" :formatter="toCotegory"></el-table-column>
       <el-table-column prop="createDate" label="日期" width="170" :formatter="toDate"></el-table-column>
       <el-table-column prop="admin" label="管理员" width="110"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="deleteItem(scope)">删除</el-button>
-          <el-button type="success" size="mini" @click="editList">编辑</el-button>
+          <el-button type="success" size="mini" @click="editList(scope.row.id)">编辑</el-button>
+          <el-button type="success" size="mini" @click="editDetail(scope.row)">编辑详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -107,7 +108,7 @@
     <DiaLog :flag="dialogShow" @showValue="showValue" />
 
     <!-- 编辑框 -->
-    <EditDiaLog :flag="editdialog" @showEdit="showEdit"/>
+    <EditDiaLog :flag="editdialog" @showEdit="showEdit" :editId="editId" @getList="getCategoryList"/>
   </div>
 </template>
 
@@ -125,11 +126,12 @@ export default {
       dialogShow: false, // 对话框显示隐藏
       editdialog:false, // 编辑框显示隐藏
       dateValue: "", // 日期选择框
-      selectValue: "ID", // 关键字选择框
+      selectValue: "", // 关键字选择框
       categoryValue: "", //类型选择框
       searchValue: "", // 搜索输入框
       currentPage4: 1,
       options: [], // 分类数据
+      // 搜索选择框
       searchOptions: [
         {
           value: "id",
@@ -139,13 +141,14 @@ export default {
           value: "title",
           label: "标题"
         }
-      ], // 搜索选择框
+      ], 
       tableData: [], // 列表数据
       pageNumber: 1, // 当前页码
       pageSize: 2, // 每页条数
       total: 0, // 总条数
       loading: false, // 表格加载提示
-      deleteId: ""
+      deleteId: "",   // 删除用的id
+      editId:""  // 编辑用的id
     };
   },
   methods: {
@@ -168,12 +171,22 @@ export default {
       this.dialogShow = false;
     },
     // 打开编辑框
-    editList(){
+    editList(id){
       this.editdialog=true
+      this.editId=id
     },
     // 关闭编辑框
     showEdit(){
       this.editdialog=false
+    },
+    // 编辑详情
+    editDetail(row){
+      this.$router.push({
+        path:"/editdetail",
+        query:{
+          id:row.id
+        }
+      })
     },
     //删除选中数据
     deleteItem(scope) {
