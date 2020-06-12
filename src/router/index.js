@@ -9,6 +9,7 @@ import Control from '@/views/Control/index.vue'
 import Index from '@/views/content/index.vue'  //控制台首页
 import InfoList from "@/views/Info/infoList.vue" //信息管理列表
 import Category from "@/views/Info/infoCategory.vue" //信息管理分类
+import EditDetail from "@/views/Info/infoEditDetail.vue" //用户分类
 import UserList from "@/views/Users/userList.vue" //用户分类
 Vue.use(VueRouter);
 
@@ -75,6 +76,15 @@ const routes = [
           name:'信息分类'
         },
         component: Category
+      },
+      {
+        path: "/editdetail",
+        name: "EditDetail",
+        hiddren:true,
+        meta:{
+          name:'编辑详情'
+        },
+        component: EditDetail
       }
     ]
   },
