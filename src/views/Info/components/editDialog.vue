@@ -10,7 +10,7 @@
     >
       <el-form :model="form">
         <el-form-item label="类型:" :label-width="formLabelWidth">
-          <el-select v-model="form.category" placeholder="请选择活动区域">
+          <el-select v-model="form.category" placeholder="请选择">
             <el-option
               v-for="item in CategoryList"
               :key="item.id"
