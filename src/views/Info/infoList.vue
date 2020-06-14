@@ -6,7 +6,11 @@
         <div class="label_wrap category">
           <label for>分类:</label>
           <div class="warp_content">
-            <el-select v-model="categoryValue" placeholder="请选择" style="width:100%;">
+            <el-select
+              v-model="categoryValue"
+              placeholder="请选择"
+              style="width:100%;"
+            >
               <el-option
                 v-for="item in options.data"
                 :label="item.category_name"
@@ -38,7 +42,11 @@
         <div class="label_wrap key_word">
           <label for>关键字:</label>
           <div class="warp_content">
-            <el-select v-model="selectValue" placeholder="请选择" style="width:100%;">
+            <el-select
+              v-model="selectValue"
+              placeholder="请选择"
+              style="width:100%;"
+            >
               <el-option
                 v-for="item in searchOptions"
                 :key="item.value"
@@ -50,7 +58,11 @@
         </div>
       </el-col>
       <el-col :span="3">
-        <el-input placeholder="请输入关键字" style="width:100%;" v-model="searchValue"></el-input>
+        <el-input
+          placeholder="请输入关键字"
+          style="width:100%;"
+          v-model="searchValue"
+        ></el-input>
       </el-col>
       <el-col :span="2">
         <el-button type="danger" @click="searchData">搜索</el-button>
@@ -59,7 +71,12 @@
         <span style="color:#FFF;">1</span>
       </el-col>
       <el-col :span="2">
-        <el-button type="danger" style="width:100%;float:right;" @click="addList">新增</el-button>
+        <el-button
+          type="danger"
+          style="width:100%;float:right;"
+          @click="addList"
+          >新增</el-button
+        >
       </el-col>
     </el-row>
 
@@ -72,15 +89,35 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column prop="title" label="标题" width="700"></el-table-column>
-      <el-table-column prop="category" label="类型" width="130" :formatter="toCotegory"></el-table-column>
-      <el-table-column prop="createDate" label="日期" width="170" :formatter="toDate"></el-table-column>
-      <el-table-column prop="admin" label="管理员" width="110"></el-table-column>
+      <el-table-column prop="title" label="标题" width="300"></el-table-column>
+      <el-table-column
+        prop="category"
+        label="类型"
+        width="130"
+        :formatter="toCotegory"
+      ></el-table-column>
+      <el-table-column
+        prop="createDate"
+        label="日期"
+        width="170"
+        :formatter="toDate"
+      ></el-table-column>
+      <el-table-column
+        prop="admin"
+        label="管理员"
+        width="110"
+      ></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem(scope)">删除</el-button>
-          <el-button type="success" size="mini" @click="editList(scope.row.id)">编辑</el-button>
-          <el-button type="success" size="mini" @click="editDetail(scope.row)">编辑详情</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope)"
+            >删除</el-button
+          >
+          <el-button type="success" size="mini" @click="editList(scope.row.id)"
+            >编辑</el-button
+          >
+          <el-button type="success" size="mini" @click="editDetail(scope.row)"
+            >编辑详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -88,7 +125,9 @@
     <!-- 分页、批量删除 -->
     <el-row>
       <el-col :span="12">
-        <el-button style="margin-top:36px;" @click="deleteAll">批量删除</el-button>
+        <el-button style="margin-top:36px;" @click="deleteAll"
+          >批量删除</el-button
+        >
       </el-col>
       <el-col :span="12">
         <el-pagination
@@ -100,7 +139,8 @@
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-        >></el-pagination>
+          >></el-pagination
+        >
       </el-col>
     </el-row>
 
@@ -108,7 +148,12 @@
     <DiaLog :flag="dialogShow" @showValue="showValue" />
 
     <!-- 编辑框 -->
-    <EditDiaLog :flag="editdialog" @showEdit="showEdit" :editId="editId" @getList="getCategoryList"/>
+    <EditDiaLog
+      :flag="editdialog"
+      @showEdit="showEdit"
+      :editId="editId"
+      @getList="getCategoryList"
+    />
   </div>
 </template>
 
@@ -119,12 +164,13 @@ import { getCategoryData, getList, deleteData } from "@/api/info";
 import { timestampToTime } from "@/utils/date";
 export default {
   components: {
-    DiaLog,EditDiaLog
+    DiaLog,
+    EditDiaLog
   },
   data() {
     return {
       dialogShow: false, // 对话框显示隐藏
-      editdialog:false, // 编辑框显示隐藏
+      editdialog: false, // 编辑框显示隐藏
       dateValue: "", // 日期选择框
       selectValue: "", // 关键字选择框
       categoryValue: "", //类型选择框
@@ -141,14 +187,14 @@ export default {
           value: "title",
           label: "标题"
         }
-      ], 
+      ],
       tableData: [], // 列表数据
       pageNumber: 1, // 当前页码
       pageSize: 2, // 每页条数
       total: 0, // 总条数
       loading: false, // 表格加载提示
-      deleteId: "",   // 删除用的id
-      editId:""  // 编辑用的id
+      deleteId: "", // 删除用的id
+      editId: "" // 编辑用的id
     };
   },
   methods: {
@@ -171,22 +217,22 @@ export default {
       this.dialogShow = false;
     },
     // 打开编辑框
-    editList(id){
-      this.editdialog=true
-      this.editId=id
+    editList(id) {
+      this.editdialog = true;
+      this.editId = id;
     },
     // 关闭编辑框
-    showEdit(){
-      this.editdialog=false
+    showEdit() {
+      this.editdialog = false;
     },
     // 编辑详情
-    editDetail(row){
+    editDetail(row) {
       this.$router.push({
-        path:"/editdetail",
-        query:{
-          id:row.id
+        path: "/editdetail",
+        query: {
+          id: row.id
         }
-      })
+      });
     },
     //删除选中数据
     deleteItem(scope) {
@@ -230,7 +276,9 @@ export default {
     // 根据id匹配类型名
     toCotegory(row) {
       let categoryId = row.categoryId;
-      let categoryData = this.options.data.filter(item =>item.id == categoryId)[0];
+      let categoryData = this.options.data.filter(
+        item => item.id == categoryId
+      )[0];
       return categoryData.category_name;
     },
     // 选择框事件
@@ -269,7 +317,7 @@ export default {
       if (!this.categoryId) {
         requsetData.categoryValue = this.categoryValue;
       }
-      //  判断时间数据  
+      //  判断时间数据
       if (this.dateValue.length > 0) {
         (requsetData.startTiem = this.dateValue[0]),
           (requsetData.endTime = this.dateValue[1]);
@@ -281,14 +329,14 @@ export default {
         requsetData.pageNumber = this.pageNumber;
         requsetData.pageSize = this.pageSize;
       }
-      return requsetData
+      return requsetData;
     },
     // 搜索
     searchData() {
       let requsetData = this.fomatSearchData();
-      getList(requsetData).then(res=>{
+      getList(requsetData).then(res => {
         this.tableData = res.data.data.data;
-      })
+      });
     }
   },
   mounted() {
