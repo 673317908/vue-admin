@@ -89,7 +89,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column prop="title" label="标题" width="300"></el-table-column>
+      <el-table-column prop="title" label="标题" width="700"></el-table-column>
       <el-table-column
         prop="category"
         label="类型"
