@@ -28,13 +28,17 @@
     <!-- 表格 -->
     <el-table :data="tableData" border style="width: 100%;margin-top:20px;">
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column prop="userName" label="邮箱\用户名" width="180"></el-table-column>
-      <el-table-column prop="name" label="真实姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="手机号"></el-table-column>
-      <el-table-column prop="date" label="地区" width="180"></el-table-column>
-      <el-table-column prop="name" label="角色" width="180"></el-table-column>
-      <el-table-column prop="address" label="禁启用状态"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="userName" label="邮箱\用户名" width="203"></el-table-column>
+      <el-table-column prop="truename" label="真实姓名" width="180"></el-table-column>
+      <el-table-column prop="mobile" label="手机号" width="135"></el-table-column>
+      <el-table-column prop="address" label="地区" width="425"></el-table-column>
+      <el-table-column prop="role" label="角色" width="205"></el-table-column>
+      <el-table-column label="禁启用状态"  width="143">
+        <template>
+          <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作"  width="143">
         <template>
           <el-button type="danger" size="mini">删除</el-button>
           <el-button type="success" size="mini">编辑</el-button>
@@ -67,56 +71,28 @@
 export default {
   data() {
     return {
+      value:true,
       tableData: [
         {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+          userName: "673317908@qq.com",
+          truename: "王小虎",
+          mobile: "13877712345",
+          address: "上海市普陀区金沙江路 1518 弄",
+          role: "超管"
         },
         {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
+          userName: "673317908@qq.com",
+          truename: "王小虎",
+          mobile: "13877712345",
+          address: "上海市普陀区金沙江路 1518 弄",
+          role: "超管"
         },
         {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
+          userName: "673317908@qq.com",
+          truename: "王小虎",
+          mobile: "13877712345",
+          address: "上海市普陀区金沙江路 1518 弄",
+          role: "超管"
         }
       ]
     };
