@@ -38,10 +38,10 @@
           <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="143">
-        <template slot="scope">
-          <el-button type="danger" size="mini" @click="deleteUser">删除</el-button>
-          <el-button type="success" size="mini" @click="editUser">编辑</el-button>
+      <el-table-column label="操作" width="156">
+        <template slot-scope="scope">
+          <el-button type="danger" size="mini" @click="deleteUser(scope)">删除</el-button>
+          <el-button type="success" size="mini" @click="editUser(scope)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,7 +119,9 @@ export default {
       this.addModalValue = false;
     },
     // 删除用户
-    deleteUser(){},
+    deleteUser(scope){
+      console.log(scope)
+    },
     // 编辑用户
     editUser(){},
     // 切换每页条数
