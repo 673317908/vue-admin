@@ -21,7 +21,7 @@
         </el-col>
       </el-col>
       <el-col :span="6">
-        <el-button type="danger" style="float:right;">新增</el-button>
+        <el-button type="danger" style="float:right;" @click="addUser">新增</el-button>
       </el-col>
     </el-row>
 
@@ -33,12 +33,12 @@
       <el-table-column prop="mobile" label="手机号" width="135"></el-table-column>
       <el-table-column prop="address" label="地区" width="425"></el-table-column>
       <el-table-column prop="role" label="角色" width="205"></el-table-column>
-      <el-table-column label="禁启用状态"  width="143">
+      <el-table-column label="禁启用状态" width="143">
         <template>
           <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作"  width="143">
+      <el-table-column label="操作" width="143">
         <template>
           <el-button type="danger" size="mini">删除</el-button>
           <el-button type="success" size="mini">编辑</el-button>
@@ -56,22 +56,29 @@
           style="margin-top:36px;float:right"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
           :page-sizes="[2, 3, 4, 5]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
+          :total="100"
         >></el-pagination>
       </el-col>
     </el-row>
+
+    <!-- 新增用户对话框 -->
+    <addUser :addModalValue="addModalValue" @showModal="showModal"/>
   </div>
 </template>
 
 <script>
+import addUser from "./components/addDialog"
 export default {
+  components:{
+    addUser
+  },
   data() {
     return {
-      value:true,
+      addModalValue: false,  // 新增用户对话框默认值
+      value: true,
       tableData: [
         {
           userName: "673317908@qq.com",
@@ -98,8 +105,17 @@ export default {
     };
   },
   methods: {
+    // 新增用户
+    addUser() {
+      this.addModalValue = true;
+    },
+    showModal(){
+      this.addModalValue = false;
+    },
     handleSizeChange() {},
-    handleCurrentChange() {}
+    handleCurrentChange() {},
+    // 批量删除
+    deleteAll() {}
   }
 };
 </script>
