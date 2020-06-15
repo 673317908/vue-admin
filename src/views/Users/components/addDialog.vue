@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-dialog title="新增" :visible.sync="addMoadl" width="580px" @close="close" >
-      <el-form :model="form">
-        <el-form-item label="用户名：" :label-width="formLabelWidth">
+    <el-dialog title="新增" :visible.sync="addMoadl" width="580px" @close="close" :append-to-body="true" >
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="用户名：" :label-width="formLabelWidth"  prop="userName">
           <el-input v-model="form.userName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="姓名：" :label-width="formLabelWidth">
+        <el-form-item label="姓名：" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="手机号：" :label-width="formLabelWidth">
+        <el-form-item label="手机号：" :label-width="formLabelWidth" prop="mobile">
           <el-input v-model="form.mobile" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
@@ -62,7 +62,21 @@ export default {
         province: "",   // 省
         city: "",   // 市
         street: "",  // 区
-      }
+      },
+    //   验证规则
+    rules: {
+          userName: [
+            { required: true, message: '请输入用户名', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          name: [
+            { required: true, message: '请输入真实姓名',  trigger: 'blur' }
+          ],
+          mobile: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' },
+            { min: 3, max: 11, message: '请输入正确手机号码', trigger: 'blur' }
+          ]
+        }
     };
   },
   watch: {
