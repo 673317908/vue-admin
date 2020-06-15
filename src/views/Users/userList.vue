@@ -14,10 +14,10 @@
           </div>
         </el-col>
         <el-col :span="4">
-          <el-input placeholder="请输入关键字"></el-input>
+          <el-input placeholder="请输入关键字" v-model="searchText"></el-input>
         </el-col>
         <el-col :span="2">
-          <el-button type="danger" style="width:100%;">搜索</el-button>
+          <el-button type="danger" style="width:100%;" @click="search">搜索</el-button>
         </el-col>
       </el-col>
       <el-col :span="6">
@@ -39,9 +39,9 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" width="143">
-        <template>
-          <el-button type="danger" size="mini">删除</el-button>
-          <el-button type="success" size="mini">编辑</el-button>
+        <template slot="scope">
+          <el-button type="danger" size="mini" @click="deleteUser">删除</el-button>
+          <el-button type="success" size="mini" @click="editUser">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -71,12 +71,15 @@
 
 <script>
 import addUser from "./components/addDialog"
+import { getAddress } from "@/api/user"
 export default {
   components:{
     addUser
   },
   data() {
     return {
+
+      searchText:"",  // 搜索框
       addModalValue: false,  // 新增用户对话框默认值
       value: true,
       tableData: [
@@ -105,17 +108,28 @@ export default {
     };
   },
   methods: {
-    // 新增用户
+    // 搜索
+    search(){},
+    // 打开新增用户对话框
     addUser() {
       this.addModalValue = true;
     },
+    // 关闭新增用户对话框
     showModal(){
       this.addModalValue = false;
     },
+    // 删除用户
+    deleteUser(){},
+    // 编辑用户
+    editUser(){},
+    // 切换每页条数
     handleSizeChange() {},
+    // 翻页
     handleCurrentChange() {},
     // 批量删除
     deleteAll() {}
+  },
+  mounted(){
   }
 };
 </script>
