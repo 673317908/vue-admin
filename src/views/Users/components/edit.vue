@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-dialog
-      title="新增"
-      :visible.sync="addMoadl"
+      title="编辑"
+      :visible.sync="model"
       width="600px"
       @close="close"
       @open="open"
@@ -10,49 +10,26 @@
     >
       <el-form :model="form" :rules="rules">
         <el-form-item
-          label="用户名："
+          label="邮箱\用户名："
           :label-width="formLabelWidth"
-          prop="username"
+          value
+          prop="userName"
         >
-          <el-input
-            v-model.trim="form.username"
-            autocomplete="off"
-            placeholder="请输入用户名"
-          ></el-input>
+          <el-input v-model="form.userName" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item
-          label="姓名："
+          label="真是姓名："
           :label-width="formLabelWidth"
-          prop="truename"
+          prop="name"
         >
-          <el-input
-            v-model.trim="form.truename"
-            autocomplete="off"
-            placeholder="请输入姓名"
-          ></el-input>
-        </el-form-item>
-        <el-form-item
-          label="密码："
-          :label-width="formLabelWidth"
-          prop="password"
-        >
-          <el-input
-            v-model.trim="form.password"
-            autocomplete="off"
-            placeholder="请输入密码"
-            type="password"
-          ></el-input>
+          <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item
           label="手机号："
           :label-width="formLabelWidth"
-          prop="phone"
+          prop="mobile"
         >
-          <el-input
-            v-model.number="form.phone"
-            autocomplete="off"
-            placeholder="请输入手机号"
-          ></el-input>
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">
@@ -112,26 +89,18 @@
             </el-row>
           </div>
         </el-form-item>
-        <el-form-item
-          label="是否启用："
-          :label-width="formLabelWidth"
-          prop="status"
-        >
-          <el-radio v-model="form.status" label="1">启用</el-radio>
-          <el-radio v-model="form.status" label="2">禁用</el-radio>
+        <el-form-item label="角色：" :label-width="formLabelWidth">
+          <el-checkbox v-model="checked">系统管理员</el-checkbox>
+          <el-checkbox v-model="checked">信息管理员</el-checkbox>
+          <el-checkbox v-model="checked">用户管理员</el-checkbox>
         </el-form-item>
-        <el-form-item label="角色：" :label-width="formLabelWidth" prop="role">
-          <el-checkbox
-            v-model="form.role"
-            v-for="item in roleData"
-            :key="item.role"
-            :label="item.name"
-            :value="item.role"
-          ></el-checkbox>
+        <el-form-item label="是否启用：" :label-width="formLabelWidth">
+          <el-radio v-model="radio" label="1">启用</el-radio>
+          <el-radio v-model="radio" label="2">禁用</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancle">取 消</el-button>
         <el-button type="danger" @click="ok">确 定</el-button>
       </div>
     </el-dialog>
@@ -139,29 +108,30 @@
 </template>
 
 <script>
-import { getAddress, getRole, addUser } from "@/api/user";
-import { checkEmail, checkPassword } from "@/utils/Login";
+import { getAddress } from "@/api/user";
 export default {
   props: {
-    addModalValue: {
-      type: Boolean,
+    editModalValue: {
       default: false
+    },
+    row: {
+      type: Object,
+      default: function() {
+        return {};
+      }
     }
   },
   data() {
     return {
-      formLabelWidth: "120px", // label宽度
-      addMoadl: false, // 对话框默认值
-      checked: true, // 复选框默认值
+      model: false,
+      checked: true,
+      formLabelWidth: "120px",
+      radio: false,
       // 表单绑定值
       form: {
-        phone: "", // 电话
-        username: "", // 用户名
-        truename: "", // 真是姓名
-        password: "", // 密码
-        status: "1", // 禁启用状态
-        region: "", // 地区
-        role: [],
+        mobile: "", // 电话
+        userName: "", // 用户名
+        name: "", // 真是姓名
         province: "", // 省
         city: "", // 市
         area: "", // 区县
@@ -171,44 +141,40 @@ export default {
       cityData: [], // 城市数据
       areaData: [], // 区县数据
       streetData: [], // 街道
-      roleData: [], // 角色数据
       //   验证规则
       rules: {
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
+        userName: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
-        truename: [
-          { required: true, message: "请输入真实姓名", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 20, message: "请输入正确格式的密码", trigger: "blur" }
+        name: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+        mobile: [
+          { required: true, message: "请输入手机号码", trigger: "blur" },
+          { min: 3, max: 11, message: "请输入正确手机号码", trigger: "blur" }
         ]
       }
     };
   },
   watch: {
-    addModalValue: {
-      handler(newValue) {
-        this.addMoadl = newValue;
-      }
+    editModalValue(n) {
+      this.model = n;
+      this.form.mobile = this.row.mobile;
+      this.form.userName = this.row.userName;
+      this.form.name = this.row.truename;
     }
   },
   methods: {
-    // 关闭
-    close() {
-      this.$emit("showModal", false);
+    // 关闭对话框
+    cancle() {
+      this.$emit("showEdit", false);
     },
-
+    close() {
+      this.$emit("showEdit", false);
+    },
+    // 获取省份数据
     open() {
-      // 获取省份数据
       getAddress({ type: "province" }).then(res => {
         this.provinceData = res.data.data.data;
-      });
-      // 获取角色
-      getRole().then(res => {
-        console.log(res);
-        this.roleData = res.data.data;
       });
     },
     // 获取城市数据
@@ -244,49 +210,9 @@ export default {
         this.form[item] = "";
       });
     },
-    // 确定
+    // 确认修改
     ok() {
-      if (!this.form.username) {
-        this.$message({
-          message: "用户名不能为空，请输入用户名",
-          type: "error"
-        });
-      } else if (checkEmail(this.form.username)) {
-        this.$message({
-          message: "请输入正确的邮箱"
-        });
-      } else if (checkPassword(this.form.password)) {
-        this.$message({
-          message: "请输入正确格式的密码"
-        });
-      } else if (this.form.role.length == 0) {
-        this.$message({
-          message: "请输入角色类型"
-        });
-      } else {
-        let resData = {
-          username: this.form.username,
-          truename: this.form.truename,
-          password: this.form.password,
-          phone: this.form.phone,
-          region: this.form.region,
-          status: this.form.status,
-          role: this.form.role
-        };
-        addUser(resData).then(res => {
-          console.log(res);
-          if (res.data.resCode == 0) {
-            this.$emit("showModal", false);
-          }
-          this.$message({
-            message: res.data.message
-          });
-        });
-      }
-    },
-    // 取消
-    cancel() {
-      this.$emit("showModal", false);
+      this.$emit("showEdit", false);
     }
   }
 };
