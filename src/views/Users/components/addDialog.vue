@@ -9,33 +9,13 @@
       :append-to-body="true"
     >
       <el-form :model="form" :rules="rules">
-        <el-form-item
-          label="用户名："
-          :label-width="formLabelWidth"
-          prop="username"
-        >
-          <el-input
-            v-model.trim="form.username"
-            autocomplete="off"
-            placeholder="请输入用户名"
-          ></el-input>
+        <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
+          <el-input v-model.trim="form.username" autocomplete="off" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item
-          label="姓名："
-          :label-width="formLabelWidth"
-          prop="truename"
-        >
-          <el-input
-            v-model.trim="form.truename"
-            autocomplete="off"
-            placeholder="请输入姓名"
-          ></el-input>
+        <el-form-item label="姓名：" :label-width="formLabelWidth" prop="truename">
+          <el-input v-model.trim="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item
-          label="密码："
-          :label-width="formLabelWidth"
-          prop="password"
-        >
+        <el-form-item label="密码：" :label-width="formLabelWidth" prop="password">
           <el-input
             v-model.trim="form.password"
             autocomplete="off"
@@ -43,26 +23,14 @@
             type="password"
           ></el-input>
         </el-form-item>
-        <el-form-item
-          label="手机号："
-          :label-width="formLabelWidth"
-          prop="phone"
-        >
-          <el-input
-            v-model.number="form.phone"
-            autocomplete="off"
-            placeholder="请输入手机号"
-          ></el-input>
+        <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
+          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">
             <el-row :gutter="10">
               <el-col :span="6">
-                <el-select
-                  v-model="form.province"
-                  placeholder="省"
-                  @change="selectProvince"
-                >
+                <el-select v-model="form.province" placeholder="省" @change="selectProvince">
                   <el-option
                     v-for="item in provinceData"
                     :key="item.PROVINCE_CODE"
@@ -72,11 +40,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select
-                  v-model="form.city"
-                  placeholder="市"
-                  @change="selectCity"
-                >
+                <el-select v-model="form.city" placeholder="市" @change="selectCity">
                   <el-option
                     v-for="item in cityData"
                     :key="item.CITY_CODE"
@@ -86,11 +50,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select
-                  v-model="form.area"
-                  placeholder="区\县"
-                  @change="selectArea"
-                >
+                <el-select v-model="form.area" placeholder="区\县" @change="selectArea">
                   <el-option
                     v-for="item in areaData"
                     :key="item.AREA_CODE"
@@ -112,11 +72,7 @@
             </el-row>
           </div>
         </el-form-item>
-        <el-form-item
-          label="是否启用："
-          :label-width="formLabelWidth"
-          prop="status"
-        >
+        <el-form-item label="是否启用：" :label-width="formLabelWidth" prop="status">
           <el-radio v-model="form.status" label="1">启用</el-radio>
           <el-radio v-model="form.status" label="2">禁用</el-radio>
         </el-form-item>
@@ -140,7 +96,6 @@
 
 <script>
 import { getAddress, getRole, addUser } from "@/api/user";
-import { checkEmail, checkPassword } from "@/utils/Login";
 export default {
   props: {
     addModalValue: {
@@ -175,14 +130,23 @@ export default {
       //   验证规则
       rules: {
         username: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            pattern: /^([a-zA-Z]|[0-9])(\w|)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/,
+            message: "请输入正确的用户名",
+            trigger: "blur"
+          }
         ],
         truename: [
           { required: true, message: "请输入真实姓名", trigger: "blur" }
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, max: 20, message: "请输入正确格式的密码", trigger: "blur" }
+          {
+            pattern: /^[0-9]{6,20}$/,
+            message: "请输入正确格式的密码",
+            trigger: "blur"
+          }
         ]
       }
     };
@@ -207,7 +171,6 @@ export default {
       });
       // 获取角色
       getRole().then(res => {
-        console.log(res);
         this.roleData = res.data.data;
       });
     },
@@ -246,20 +209,7 @@ export default {
     },
     // 确定
     ok() {
-      if (!this.form.username) {
-        this.$message({
-          message: "用户名不能为空，请输入用户名",
-          type: "error"
-        });
-      } else if (checkEmail(this.form.username)) {
-        this.$message({
-          message: "请输入正确的邮箱"
-        });
-      } else if (checkPassword(this.form.password)) {
-        this.$message({
-          message: "请输入正确格式的密码"
-        });
-      } else if (this.form.role.length == 0) {
+      if (this.form.role.length == 0) {
         this.$message({
           message: "请输入角色类型"
         });
