@@ -9,37 +9,20 @@
       :append-to-body="true"
     >
       <el-form :model="form" :rules="rules">
-        <el-form-item
-          label="邮箱\用户名："
-          :label-width="formLabelWidth"
-          value
-          prop="userName"
-        >
+        <el-form-item label="邮箱\用户名：" :label-width="formLabelWidth" value prop="userName">
           <el-input v-model="form.userName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item
-          label="真是姓名："
-          :label-width="formLabelWidth"
-          prop="name"
-        >
+        <el-form-item label="真是姓名：" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item
-          label="手机号："
-          :label-width="formLabelWidth"
-          prop="mobile"
-        >
+        <el-form-item label="手机号：" :label-width="formLabelWidth" prop="mobile">
           <el-input v-model="form.mobile" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">
             <el-row :gutter="10">
               <el-col :span="6">
-                <el-select
-                  v-model="form.province"
-                  placeholder="省"
-                  @change="selectProvince"
-                >
+                <el-select v-model="form.province" placeholder="省" @change="selectProvince">
                   <el-option
                     v-for="item in provinceData"
                     :key="item.PROVINCE_CODE"
@@ -49,11 +32,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select
-                  v-model="form.city"
-                  placeholder="市"
-                  @change="selectCity"
-                >
+                <el-select v-model="form.city" placeholder="市" @change="selectCity">
                   <el-option
                     v-for="item in cityData"
                     :key="item.CITY_CODE"
@@ -63,11 +42,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select
-                  v-model="form.area"
-                  placeholder="区\县"
-                  @change="selectArea"
-                >
+                <el-select v-model="form.area" placeholder="区\县" @change="selectArea">
                   <el-option
                     v-for="item in areaData"
                     :key="item.AREA_CODE"
@@ -90,9 +65,12 @@
           </div>
         </el-form-item>
         <el-form-item label="角色：" :label-width="formLabelWidth">
-          <el-checkbox v-model="checked">系统管理员</el-checkbox>
-          <el-checkbox v-model="checked">信息管理员</el-checkbox>
-          <el-checkbox v-model="checked">用户管理员</el-checkbox>
+          <el-checkbox 
+          v-model="role" 
+          v-for="item in roleData" 
+          :key="item.role" 
+          :label="item.name" 
+          :value="item.role"></el-checkbox>
         </el-form-item>
         <el-form-item label="是否启用：" :label-width="formLabelWidth">
           <el-radio v-model="radio" label="1">启用</el-radio>
@@ -108,7 +86,7 @@
 </template>
 
 <script>
-import { getAddress } from "@/api/user";
+import { getAddress,getRole } from "@/api/user";
 export default {
   props: {
     editModalValue: {
@@ -141,6 +119,8 @@ export default {
       cityData: [], // 城市数据
       areaData: [], // 区县数据
       streetData: [], // 街道
+      roleData:[], // 角色数据
+      role:[],  // 选中角色数据
       //   验证规则
       rules: {
         userName: [
@@ -150,7 +130,11 @@ export default {
         name: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
         mobile: [
           { required: true, message: "请输入手机号码", trigger: "blur" },
-          { min: 3, max: 11, message: "请输入正确手机号码", trigger: "blur" }
+          {
+            pattern: /^1[3456789]\d{9}$/,
+            message: "请输入正确手机号码",
+            trigger: "blur"
+          }
         ]
       }
     };
@@ -171,10 +155,14 @@ export default {
     close() {
       this.$emit("showEdit", false);
     },
-    // 获取省份数据
     open() {
+      // 获取省份数据
       getAddress({ type: "province" }).then(res => {
         this.provinceData = res.data.data.data;
+      });
+       // 获取角色
+      getRole().then(res => {
+        this.roleData = res.data.data;
       });
     },
     // 获取城市数据
