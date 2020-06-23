@@ -25,3 +25,12 @@ export function addUser(data) {
     data
   });
 }
+
+// 获取用户列表
+export function getUserList(data){
+  return axios.request({
+    url:"/user/getList/",
+    method:"post",
+    data
+  })
+}
