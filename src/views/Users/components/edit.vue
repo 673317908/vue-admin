@@ -65,12 +65,13 @@
           </div>
         </el-form-item>
         <el-form-item label="角色：" :label-width="formLabelWidth">
-          <el-checkbox 
-          v-model="role" 
-          v-for="item in roleData" 
-          :key="item.role" 
-          :label="item.name" 
-          :value="item.role"></el-checkbox>
+          <el-checkbox
+            v-model="role"
+            v-for="item in roleData"
+            :key="item.role"
+            :label="item.name"
+            :value="item.role"
+          ></el-checkbox>
         </el-form-item>
         <el-form-item label="是否启用：" :label-width="formLabelWidth">
           <el-radio v-model="radio" label="1">启用</el-radio>
@@ -86,7 +87,7 @@
 </template>
 
 <script>
-import { getAddress,getRole } from "@/api/user";
+import { getAddress, getRole } from "@/api/user";
 export default {
   props: {
     editModalValue: {
@@ -119,8 +120,8 @@ export default {
       cityData: [], // 城市数据
       areaData: [], // 区县数据
       streetData: [], // 街道
-      roleData:[], // 角色数据
-      role:[],  // 选中角色数据
+      roleData: [], // 角色数据
+      role: [], // 选中角色数据
       //   验证规则
       rules: {
         userName: [
@@ -160,7 +161,7 @@ export default {
       getAddress({ type: "province" }).then(res => {
         this.provinceData = res.data.data.data;
       });
-       // 获取角色
+      // 获取角色
       getRole().then(res => {
         this.roleData = res.data.data;
       });

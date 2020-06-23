@@ -115,8 +115,8 @@ export default {
         truename: "", // 真是姓名
         password: "", // 密码
         status: "1", // 禁启用状态
+        role: [],
         region: "", // 地区
-        role: {},
         province: "", // 省
         city: "", // 市
         area: "", // 区县
@@ -175,7 +175,7 @@ export default {
       });
     },
     // 获取城市数据
-    selectProvince(value) {
+    selectProvince(value, label) {
       getAddress({ type: "city", province_code: value }).then(res => {
         this.cityData = res.data.data.data;
       });
@@ -226,16 +226,18 @@ export default {
         addUser(resData).then(res => {
           if (res.data.resCode == 0) {
             this.$emit("showModal", false);
-            this.$emit("success")
+            this.$emit("success");
+            this.$message({
+              message: res.data.message,
+              type: "success"
+            });
           }
-          this.$message({
-            message: res.data.message
-          });
         });
       }
     },
     // 取消
     cancel() {
+      console.log(this.form.city);
       this.$emit("showModal", false);
     }
   }
