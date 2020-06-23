@@ -8,7 +8,7 @@
             <label for>分类:</label>
             <div class="warp_content">
               <el-select placeholder="请选择">
-                <el-option></el-option>
+                <el-option v-for="item in options" :key="item.id" :label="item.text" :value="item.id"></el-option>
               </el-select>
             </div>
           </div>
@@ -71,6 +71,7 @@ export default {
       show: {
         1: false
       },
+      options:[{id:1,text:'姓名'},{id:2,text:'手机号'}],
       searchText: "", // 搜索框
       addModalValue: false // 新增用户对话框默认值
     };
