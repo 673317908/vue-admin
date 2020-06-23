@@ -30,31 +30,10 @@
     </el-row>
 
     <!-- 表格 -->
-    <tableList />
-
-    <!-- 分页、批量删除 -->
-    <el-row>
-      <el-col :span="12">
-        <el-button style="margin-top:36px;" @click="deleteAll"
-          >批量删除</el-button
-        >
-      </el-col>
-      <el-col :span="12">
-        <el-pagination
-          style="margin-top:36px;float:right"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[2, 3, 4, 5]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="100"
-          >></el-pagination
-        >
-      </el-col>
-    </el-row>
+    <tableList :on-refresh="onRefresh[1]"/>
 
     <!-- 新增用户对话框 -->
-    <addUser :addModalValue="addModalValue" @showModal="showModal" />
+    <addUser :addModalValue="addModalValue" @showModal="showModal" @success="success(1)"/>
   </div>
 </template>
 
@@ -66,8 +45,16 @@ export default {
     addUser,
     tableList
   },
+   props:{
+    "on-refresh":{
+      default:false
+    }
+  },
   data() {
     return {
+       onRefresh: {
+        1: false
+      },
       show: {
         1: false
       },
@@ -87,12 +74,9 @@ export default {
     showModal() {
       this.addModalValue = false;
     },
-    // 切换每页条数
-    handleSizeChange() {},
-    // 翻页
-    handleCurrentChange() {},
-    // 批量删除
-    deleteAll() {}
+    success(type){
+      this.onRefresh[type]=!this.onRefresh[type]
+    }
   },
   mounted() {}
 };
