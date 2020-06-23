@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!-- 搜索框 -->
+    <Search />
     <!-- 表格 -->
     <el-table
       :data="tableData"
@@ -15,7 +17,11 @@
       <el-table-column prop="role" label="角色" width="205"></el-table-column>
       <el-table-column label="禁启用状态" width="143">
         <template>
-          <el-switch active-color="#13ce66" inactive-color="#ff4949" v-model="switchValue"></el-switch>
+          <el-switch
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            :value="switchValue===1?true:false"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="156">
@@ -51,14 +57,21 @@
 
 <script>
 import editModal from "./edit";
+import Search from "./filter1"
 import { getUserList, deleteUser } from "@/api/user";
 export default {
   components: {
-    editModal
+    editModal,Search
   },
   props: {
     "on-refresh": {
       default: false
+    },
+    setSearchData:{
+      type:Object,
+      default:function(){
+        return {}
+      }
     }
   },
   data() {
@@ -66,8 +79,8 @@ export default {
       row: {
         1: {}
       },
-      switchValue: false,  // 禁启用状态默认值
-      editModalValue: false,  // 编辑对话框默认值
+      switchValue: false, // 禁启用状态默认值
+      editModalValue: false, // 编辑对话框默认值
       tableData: [], // 用户列表数据
       // 分页数据
       page: {
@@ -75,12 +88,12 @@ export default {
         pageSize: 2,
         total: 1
       },
-      AlldelId: "",   // 批量删除ID
-      delId: []  // 单个删除ID
+      AlldelId: "", // 批量删除ID
+      delId: [] // 单个删除ID
     };
   },
   methods: {
-    // 选中
+    // 选中数据
     handleSelectionChange(value) {
       let id = value.map(v => v.id);
       this.AlldelId = id;
@@ -109,15 +122,19 @@ export default {
     },
     // 获取用户列表数据
     getUserData() {
+      console.log(this.setSearchData)
       let resData = {
         pageNumber: this.page.pageNumber,
         pageSize: this.page.pageSize
       };
       getUserList(resData).then(res => {
         if (res.data.resCode == 0) {
-          this.tableData = res.data.data.data;
-          this.page.total = res.data.data.total;
           let data = res.data.data.data;
+          this.tableData = data;
+          this.page.total = res.data.data.total;
+          data.forEach(item => {
+            item.status == this.switchValue;
+          });
         }
       });
     },
