@@ -26,6 +26,15 @@ export function addUser(data) {
   });
 }
 
+// 删除用户
+export function deleteUser(data) {
+  return axios.request({
+    url:"/user/delete/",
+    method:"post",
+    data
+  })
+}
+
 // 获取用户列表
 export function getUserList(data){
   return axios.request({
