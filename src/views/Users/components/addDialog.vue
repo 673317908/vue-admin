@@ -30,7 +30,7 @@
           <div class="of">
             <el-row :gutter="10">
               <el-col :span="6">
-                <el-select v-model="form.province" placeholder="省" @change="selectProvince">
+                <el-select v-model="form.region.province" placeholder="省" @change="selectProvince">
                   <el-option
                     v-for="item in provinceData"
                     :key="item.PROVINCE_CODE"
@@ -40,7 +40,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select v-model="form.city" placeholder="市" @change="selectCity">
+                <el-select v-model="form.region.city" placeholder="市" @change="selectCity">
                   <el-option
                     v-for="item in cityData"
                     :key="item.CITY_CODE"
@@ -50,7 +50,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select v-model="form.area" placeholder="区\县" @change="selectArea">
+                <el-select v-model="form.region.area" placeholder="区\县" @change="selectArea">
                   <el-option
                     v-for="item in areaData"
                     :key="item.AREA_CODE"
@@ -60,7 +60,7 @@
                 </el-select>
               </el-col>
               <el-col :span="6">
-                <el-select v-model="form.street" placeholder="街道">
+                <el-select v-model="form.region.street" placeholder="街道">
                   <el-option
                     v-for="item in streetData"
                     :key="item.STREET_CODE"
@@ -96,6 +96,7 @@
 
 <script>
 import { getAddress, getRole, addUser } from "@/api/user";
+import sha1 from "js-sha1"
 export default {
   props: {
     addModalValue: {
@@ -116,11 +117,13 @@ export default {
         password: "", // 密码
         status: "1", // 禁启用状态
         role: [],
-        region: "", // 地区
-        province: "", // 省
-        city: "", // 市
-        area: "", // 区县
-        street: "" // 街道
+        // 地区
+        region: {
+          province: "",// 省
+          city: "",// 市
+          area: "",// 区县
+          street: "" // 街道
+        }
       },
       provinceData: [], // 省份数据
       cityData: [], // 城市数据
@@ -163,7 +166,7 @@ export default {
     close() {
       this.$emit("showModal", false);
     },
-
+    // 对话框打开后
     open() {
       // 获取省份数据
       getAddress({ type: "province" }).then(res => {
@@ -175,7 +178,7 @@ export default {
       });
     },
     // 获取城市数据
-    selectProvince(value, label) {
+    selectProvince(value) {
       getAddress({ type: "city", province_code: value }).then(res => {
         this.cityData = res.data.data.data;
       });
@@ -201,10 +204,10 @@ export default {
         city: ["city", "area", "street"],
         area: ["area", "street"],
         street: ["street"]
-      };
+      }; 
       var arrObj = cityReset[params.type];
       arrObj.forEach(item => {
-        this.form[item] = "";
+        this.form.region[item] = "";
       });
     },
     // 确定
@@ -217,16 +220,25 @@ export default {
         let resData = {
           username: this.form.username,
           truename: this.form.truename,
-          password: this.form.password,
+          password: sha1(this.form.password),
           phone: this.form.phone,
-          region: this.form.region,
+          region: {
+            province:this.form.region.province,
+            city:this.form.region.city,
+            area:this.form.region.area,
+            street:this.form.region.street,
+          },
           status: this.form.status,
           role: this.form.role
         };
+        resData=JSON.parse(JSON.stringify(this.form))
+        resData.role=resData.role.join("  ")
+        resData.region=JSON.stringify(this.form.region)
         addUser(resData).then(res => {
           if (res.data.resCode == 0) {
+            this.reset()
             this.$emit("showModal", false);
-            this.$emit("success");
+            this.$emit("getUserData")
             this.$message({
               message: res.data.message,
               type: "success"
@@ -237,8 +249,20 @@ export default {
     },
     // 取消
     cancel() {
-      console.log(this.form.city);
       this.$emit("showModal", false);
+    },
+    // 重置输入框
+    reset(){
+        this.form.phone= "", 
+        this.form.username= "", 
+        this.form.truename= "", 
+        this.form.password= "", 
+        this.form.status= "1", 
+        this.form.role= [],
+        this.form.region.province= "", 
+        this.form.region.city= "", 
+        this.form.region.area= "", 
+        this.form.region.street= "" 
     }
   }
 };
