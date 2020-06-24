@@ -29,7 +29,7 @@
         <el-button type="danger" style="float:right;" @click="addUser">新增</el-button>
       </el-col>
     </el-row>
-    
+
     <!-- 新增用户对话框 -->
     <addUser :addModalValue="addModalValue" @showModal="showModal" @getUserData="getUserData" />
 
@@ -53,8 +53,8 @@
             v-model="scope.row.status"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            active-value="1"
-            inactive-value="2"
+            active-value="2"
+            inactive-value="1"
             @change="statusBtn(scope.row)"
           ></el-switch>
         </template>
@@ -198,8 +198,7 @@ export default {
     },
     // 编辑用户
     editUser(scope) {
-      console.log(scope);
-      this.row[1] = scope;
+      this.row[1] = Object.assign({},scope);
       this.editModalValue = true;
     },
     // 关闭编辑

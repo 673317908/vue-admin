@@ -8,15 +8,15 @@
       @open="open"
       :append-to-body="true"
     >
-      <el-form :model="form" :rules="rules">
-        <el-form-item label="邮箱\用户名：" :label-width="formLabelWidth" value prop="userName">
-          <el-input v-model="form.userName" autocomplete="off"></el-input>
+      <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item label="邮箱：" :label-width="formLabelWidth" value prop="username">
+          <el-input v-model="form.username" autocomplete="off" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item label="真是姓名：" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item label="真实姓名：" :label-width="formLabelWidth" prop="truename">
+          <el-input v-model="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item label="手机号：" :label-width="formLabelWidth" prop="mobile">
-          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
+          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号码"></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">
@@ -64,23 +64,24 @@
             </el-row>
           </div>
         </el-form-item>
-        <el-form-item label="角色：" :label-width="formLabelWidth">
-          <el-checkbox
-            v-model="role"
-            v-for="item in roleData"
-            :key="item.role"
-            :label="item.name"
-            :value="item.role"
-          ></el-checkbox>
+        <el-form-item label="角色：" :label-width="formLabelWidth" prop="role">
+          <el-checkbox-group v-model="form.role">
+            <el-checkbox
+              v-for="item in roleData"
+              :key="item.role"
+              :label="item.name"
+              :value="item.role"
+            ></el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
         <el-form-item label="是否启用：" :label-width="formLabelWidth">
-          <el-radio v-model="radio" label="1">启用</el-radio>
-          <el-radio v-model="radio" label="2">禁用</el-radio>
+          <el-radio v-model="form.status" label="1">启用</el-radio>
+          <el-radio v-model="form.status" label="2">禁用</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancle">取 消</el-button>
-        <el-button type="danger" @click="ok">确 定</el-button>
+        <el-button type="danger" @click="ok('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -105,12 +106,13 @@ export default {
       model: false,
       checked: true,
       formLabelWidth: "120px",
-      radio: false,
       // 表单绑定值
       form: {
-        mobile: "", // 电话
-        userName: "", // 用户名
-        name: "", // 真是姓名
+        status:'1', // 禁启用状态
+        role: [], // 选中角色数据
+        phone: "", // 电话
+        username: "", // 用户名
+        truename: "", // 真是姓名
         province: "", // 省
         city: "", // 市
         area: "", // 区县
@@ -121,20 +123,31 @@ export default {
       areaData: [], // 区县数据
       streetData: [], // 街道
       roleData: [], // 角色数据
-      role: [], // 选中角色数据
       //   验证规则
       rules: {
-        userName: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+          {
+            pattern: /^([a-zA-Z]|[0-9])(\w|)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/,
+            message: "请输入正确格式的邮箱",
+            trigger: "blur"
+          }
         ],
-        name: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
-        mobile: [
+        truename: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+        phone: [
           { required: true, message: "请输入手机号码", trigger: "blur" },
           {
             pattern: /^1[3456789]\d{9}$/,
             message: "请输入正确手机号码",
             trigger: "blur"
+          }
+        ],
+        role: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择角色",
+            trigger: "change"
           }
         ]
       }
@@ -143,9 +156,6 @@ export default {
   watch: {
     editModalValue(n) {
       this.model = n;
-      this.form.mobile = this.row.mobile;
-      this.form.userName = this.row.userName;
-      this.form.name = this.row.truename;
     }
   },
   methods: {
@@ -153,9 +163,11 @@ export default {
     cancle() {
       this.$emit("showEdit", false);
     },
+    // 点击遮罩层关闭对话框
     close() {
       this.$emit("showEdit", false);
     },
+    // 打开对话框触发
     open() {
       // 获取省份数据
       getAddress({ type: "province" }).then(res => {
@@ -165,6 +177,10 @@ export default {
       getRole().then(res => {
         this.roleData = res.data.data;
       });
+      let form=this.row
+      form.role=this.row.role.split(',')
+      this.form=form
+      console.log(this.form)
     },
     // 获取城市数据
     selectProvince(value) {
@@ -200,8 +216,15 @@ export default {
       });
     },
     // 确认修改
-    ok() {
-      this.$emit("showEdit", false);
+    ok(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.$emit("showEdit", false);
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     }
   }
 };

@@ -8,12 +8,9 @@
       @open="open"
       :append-to-body="true"
     >
-      <el-form :model="form" :rules="rules">
+      <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
           <el-input v-model.trim="form.username" autocomplete="off" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名：" :label-width="formLabelWidth" prop="truename">
-          <el-input v-model.trim="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
         </el-form-item>
         <el-form-item label="密码：" :label-width="formLabelWidth" prop="password">
           <el-input
@@ -22,6 +19,9 @@
             placeholder="请输入密码"
             type="password"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="姓名：" :label-width="formLabelWidth" prop="truename">
+          <el-input v-model.trim="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
         </el-form-item>
         <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
           <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号"></el-input>
@@ -77,18 +77,19 @@
           <el-radio v-model="form.status" label="2">禁用</el-radio>
         </el-form-item>
         <el-form-item label="角色：" :label-width="formLabelWidth" prop="role">
-          <el-checkbox
-            v-model="form.role"
-            v-for="item in roleData"
-            :key="item.role"
-            :label="item.name"
-            :value="item.role"
-          ></el-checkbox>
+          <el-checkbox-group v-model="form.role">
+            <el-checkbox
+              v-for="item in roleData"
+              :key="item.role"
+              :label="item.name"
+              :value="item.role"
+            ></el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="danger" @click="ok">确 定</el-button>
+        <el-button type="danger" @click="ok('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -96,7 +97,7 @@
 
 <script>
 import { getAddress, getRole, addUser } from "@/api/user";
-import sha1 from "js-sha1"
+import sha1 from "js-sha1";
 export default {
   props: {
     addModalValue: {
@@ -108,7 +109,6 @@ export default {
     return {
       formLabelWidth: "120px", // label宽度
       addMoadl: false, // 对话框默认值
-      checked: true, // 复选框默认值
       // 表单绑定值
       form: {
         phone: "", // 电话
@@ -119,9 +119,9 @@ export default {
         role: [],
         // 地区
         region: {
-          province: "",// 省
-          city: "",// 市
-          area: "",// 区县
+          province: "", // 省
+          city: "", // 市
+          area: "", // 区县
           street: "" // 街道
         }
       },
@@ -132,23 +132,29 @@ export default {
       roleData: [], // 角色数据
       //   验证规则
       rules: {
-        username: [
+        userName: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
             pattern: /^([a-zA-Z]|[0-9])(\w|)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/,
-            message: "请输入正确的用户名",
+            message: "请输入正确格式的邮箱",
             trigger: "blur"
           }
         ],
-        truename: [
-          { required: true, message: "请输入真实姓名", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
+        name: [{ required: true, message: "请输入真实姓名", trigger: "blur" }],
+        mobile: [
+          { required: true, message: "请输入手机号码", trigger: "blur" },
           {
-            pattern: /^[0-9]{6,20}$/,
-            message: "请输入正确格式的密码",
+            pattern: /^1[3456789]\d{9}$/,
+            message: "请输入正确手机号码",
             trigger: "blur"
+          }
+        ],
+        role: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择角色",
+            trigger: "change"
           }
         ]
       }
@@ -204,65 +210,65 @@ export default {
         city: ["city", "area", "street"],
         area: ["area", "street"],
         street: ["street"]
-      }; 
+      };
       var arrObj = cityReset[params.type];
       arrObj.forEach(item => {
         this.form.region[item] = "";
       });
     },
     // 确定
-    ok() {
-      if (this.form.role.length == 0) {
-        this.$message({
-          message: "请输入角色类型"
-        });
-      } else {
-        let resData = {
-          username: this.form.username,
-          truename: this.form.truename,
-          password: sha1(this.form.password),
-          phone: this.form.phone,
-          region: {
-            province:this.form.region.province,
-            city:this.form.region.city,
-            area:this.form.region.area,
-            street:this.form.region.street,
-          },
-          status: this.form.status,
-          role: this.form.role
-        };
-        resData=JSON.parse(JSON.stringify(this.form))
-        resData.role=resData.role.join("  ")
-        resData.region=JSON.stringify(this.form.region)
-        addUser(resData).then(res => {
-          if (res.data.resCode == 0) {
-            this.reset()
-            this.$emit("showModal", false);
-            this.$emit("getUserData")
-            this.$message({
-              message: res.data.message,
-              type: "success"
-            });
-          }
-        });
-      }
+    ok(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          let resData = {
+            username: this.form.username,
+            truename: this.form.truename,
+            password: sha1(this.form.password),
+            phone: this.form.phone,
+            region: {
+              province: this.form.region.province,
+              city: this.form.region.city,
+              area: this.form.region.area,
+              street: this.form.region.street
+            },
+            status: this.form.status,
+            role: this.form.role
+          };
+          resData = JSON.parse(JSON.stringify(this.form));
+          resData.role = resData.role.join(',');
+          resData.region = JSON.stringify(this.form.region);
+          addUser(resData).then(res => {
+            if (res.data.resCode == 0) {
+              this.reset();
+              this.$emit("showModal", false);
+              this.$emit("getUserData");
+              this.$message({
+                message: res.data.message,
+                type: "success"
+              });
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
     // 取消
     cancel() {
       this.$emit("showModal", false);
     },
     // 重置输入框
-    reset(){
-        this.form.phone= "", 
-        this.form.username= "", 
-        this.form.truename= "", 
-        this.form.password= "", 
-        this.form.status= "1", 
-        this.form.role= [],
-        this.form.region.province= "", 
-        this.form.region.city= "", 
-        this.form.region.area= "", 
-        this.form.region.street= "" 
+    reset() {
+      (this.form.phone = ""),
+        (this.form.username = ""),
+        (this.form.truename = ""),
+        (this.form.password = ""),
+        (this.form.status = "1"),
+        (this.form.role = []),
+        (this.form.region.province = ""),
+        (this.form.region.city = ""),
+        (this.form.region.area = ""),
+        (this.form.region.street = "");
     }
   }
 };
