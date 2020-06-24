@@ -1,14 +1,46 @@
 <template>
   <div>
     <!-- 搜索框 -->
-    <Search />
+    <el-row :gutter="16">
+      <el-col :span="18">
+        <el-col :span="5">
+          <div class="label_wrap category">
+            <label for>分类:</label>
+            <div class="warp_content">
+              <el-select placeholder="请选择" v-model="selectValue">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value  "
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <el-input placeholder="请输入关键字" v-model="searchValue"></el-input>
+        </el-col>
+        <el-col :span="3">
+          <el-button type="danger" style="width:100%;" @click="search">搜索</el-button>
+        </el-col>
+      </el-col>
+      <el-col :span="6">
+        <el-button type="danger" style="float:right;" @click="addUser">新增</el-button>
+      </el-col>
+    </el-row>
+    
+    <!-- 新增用户对话框 -->
+    <addUser :addModalValue="addModalValue" @showModal="showModal" @getUserData="getUserData" />
+
     <!-- 表格 -->
     <el-table
       :data="tableData"
       border
       style="width: 100%;margin-top:20px;"
       @selection-change="handleSelectionChange"
-    >
+      v-loading="loading"
+      >
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="username" label="邮箱\用户名" width="203"></el-table-column>
       <el-table-column prop="truename" label="真实姓名" width="180"></el-table-column>
@@ -16,11 +48,14 @@
       <el-table-column prop="region" label="地区" width="425"></el-table-column>
       <el-table-column prop="role" label="角色" width="205"></el-table-column>
       <el-table-column label="禁启用状态" width="143">
-        <template>
+        <template slot-scope="scope">
           <el-switch
+            v-model="scope.row.status"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            :value="switchValue===1?true:false"
+            active-value="1"
+            inactive-value="2"
+            @change="statusBtn(scope.row)"
           ></el-switch>
         </template>
       </el-table-column>
@@ -57,28 +92,36 @@
 
 <script>
 import editModal from "./edit";
-import Search from "./filter1"
-import { getUserList, deleteUser } from "@/api/user";
+import addUser from "./addDialog";
+import { getUserList, deleteUser, activeStatus } from "@/api/user";
 export default {
   components: {
-    editModal,Search
-  },
-  props: {
-    "on-refresh": {
-      default: false
-    },
-    setSearchData:{
-      type:Object,
-      default:function(){
-        return {}
-      }
-    }
+    editModal,
+    addUser
   },
   data() {
     return {
       row: {
         1: {}
       },
+      loading: false, // 表格加载状态默认值
+      selectValue: "", // 选择框数据
+      searchValue: "", // 搜索框数据
+      addModalValue: false, // 新增用户对话框默认值
+      options: [
+        {
+          value: "username",
+          label: "用户名"
+        },
+        {
+          value: "truename",
+          label: "真实姓名"
+        },
+        {
+          value: "phone",
+          label: "手机号"
+        }
+      ],
       switchValue: false, // 禁启用状态默认值
       editModalValue: false, // 编辑对话框默认值
       tableData: [], // 用户列表数据
@@ -93,6 +136,39 @@ export default {
     };
   },
   methods: {
+    // 处理搜索数据
+    formatSearchValue() {
+      let resData = {};
+      resData[this.selectValue] = this.searchValue;
+      if (this.page.pageNumber && this.page.pageSize) {
+        resData.pageNumber = this.page.pageNumber;
+        resData.pageSize = this.page.pageSize;
+      }
+      return resData;
+    },
+    // 搜索
+    search() {
+      if (this.searchValue == "") {
+        this.getUserData();
+      } else {
+        let resData = this.formatSearchValue();
+        this.loading = true;
+        getUserList(resData).then(res => {
+          if (res.data.resCode == 0) {
+            this.tableData = res.data.data.data;
+            this.loading = false;
+          }
+        });
+      }
+    },
+    // 打开新增用户对话框
+    addUser() {
+      this.addModalValue = true;
+    },
+    // 关闭新增用户对话框
+    showModal() {
+      this.addModalValue = false;
+    },
     // 选中数据
     handleSelectionChange(value) {
       let id = value.map(v => v.id);
@@ -101,7 +177,38 @@ export default {
     // 删除用户
     deleteUser(row) {
       this.delId.push(row.id);
-      deleteUser({ id: this.delId }).then(res => {
+      this.$confirm(
+        "是否删除当前数据，此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消"
+        }
+      ).then(() => {
+        deleteUser({ id: this.delId }).then(res => {
+          if (res.data.resCode == 0) {
+            this.$message({
+              message: res.data.message,
+              type: "success"
+            });
+            this.getUserData();
+          }
+        });
+      });
+    },
+    // 编辑用户
+    editUser(scope) {
+      console.log(scope);
+      this.row[1] = scope;
+      this.editModalValue = true;
+    },
+    // 关闭编辑
+    showEdit() {
+      this.editModalValue = false;
+    },
+    // 禁启用状态
+    statusBtn(row) {
+      activeStatus({ id: row.id, status: row.status }).then(res => {
         if (res.data.resCode == 0) {
           this.$message({
             message: res.data.message,
@@ -111,18 +218,9 @@ export default {
         }
       });
     },
-    // 编辑用户
-    editUser(scope) {
-      this.row[1] = scope.row;
-      this.editModalValue = true;
-    },
-    // 关闭编辑
-    showEdit() {
-      this.editModalValue = false;
-    },
     // 获取用户列表数据
     getUserData() {
-      console.log(this.setSearchData)
+      this.loading = true;
       let resData = {
         pageNumber: this.page.pageNumber,
         pageSize: this.page.pageSize
@@ -132,9 +230,7 @@ export default {
           let data = res.data.data.data;
           this.tableData = data;
           this.page.total = res.data.data.total;
-          data.forEach(item => {
-            item.status == this.switchValue;
-          });
+          this.loading = false;
         }
       });
     },
@@ -150,20 +246,24 @@ export default {
     },
     // 批量删除
     deleteAll() {
-      deleteUser({ id: this.AlldelId }).then(res => {
-        if (res.data.resCode == 0) {
-          this.$message({
-            message: res.data.message,
-            type: "success"
-          });
-          this.getUserData();
+      this.$confirm(
+        "是否删除选中数据，此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消"
         }
+      ).then(() => {
+        deleteUser({ id: this.AlldelId }).then(res => {
+          if (res.data.resCode == 0) {
+            this.$message({
+              message: res.data.message,
+              type: "success"
+            });
+            this.getUserData();
+          }
+        });
       });
-    }
-  },
-  watch: {
-    onRefresh() {
-      this.getUserData();
     }
   },
   mounted() {
@@ -172,4 +272,18 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+@import "../../../styles/elementui.scss";
+
+.label_wrap {
+  &.category {
+    @include labelDom(center, 60, 40);
+  }
+  &.date {
+    @include labelDom(center, 63, 40);
+  }
+  &.key_word {
+    @include labelDom(center, 100, 40);
+  }
+}
+</style>
