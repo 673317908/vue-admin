@@ -43,3 +43,12 @@ export function getUserList(data){
     data
   })
 }
+
+// 用户禁启用状态
+export function activeStatus(data){
+  return axios.request({
+    url:"/user/actives/",
+    method:"post",
+    data
+  })
+}
