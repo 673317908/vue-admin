@@ -4,11 +4,13 @@ const state = {
     userInfo: {
         username: "" || sessionStorage.getItem("userName"),
         token: "" || sessionStorage.getItem("loginToken")
-    }
+    },
+    role:[]
 }
 
 const getters = {
-    isCollapse: state => state.isCollapse
+    isCollapse: state => state.isCollapse,
+    role:state=>state.role
 }
 
 const mutations = {
@@ -24,6 +26,10 @@ const mutations = {
     // 存储token
     setUserToken(state, value) {
         state.userInfo.token = value
+    },
+    // 存储角色
+    setRole(state,value){
+        state.role=value
     }
 }
 
