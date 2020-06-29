@@ -1,5 +1,5 @@
 <template>
-  <div id="content">
+  <div id="consoleIndex">
     首页
   </div>
 </template>
