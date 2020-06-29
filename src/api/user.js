@@ -17,6 +17,15 @@ export function getRole(data) {
   });
 }
 
+// 获取用户角色
+export function getUserRole(data){
+  return axios.request({
+    url:"/userRole/",
+    method:"post",
+    data
+  })
+}
+
 // 添加用户
 export function addUser(data) {
   return axios.request({
