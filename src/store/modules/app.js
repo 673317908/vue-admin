@@ -15,7 +15,7 @@ const mutations = {
     // 改变首页布局
     controlCollapse(state) {
         state.isCollapse = !state.isCollapse;
-        sessionStorage.setItem("isCollapse",JSON.stringify(state.isCollapse));
+        sessionStorage.setItem("isCollapse", JSON.stringify(state.isCollapse));
     },
     // 存储用户名
     setUserName(state, value) {
@@ -28,10 +28,10 @@ const mutations = {
 }
 
 const actions = {
+    // 登录
     login({ commit }, loginInfo) {
         return new Promise((resolve, reject) => {
             Login(loginInfo).then(response => {
-                console.log(response)
                 let data = response.data.data
                 commit("setUserName", data.username)
                 commit("setUserToken", data.token)
@@ -42,6 +42,13 @@ const actions = {
                 reject(error)
             })
         })
+    },
+    // 退出登录
+    loginOut({ commit }) {
+        commit("setUserName", "")
+        commit("setUserToken", "")
+        sessionStorage.removeItem("userName");
+        sessionStorage.removeItem("loginToken");
     }
 }
 
