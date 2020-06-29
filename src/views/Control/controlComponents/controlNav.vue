@@ -62,10 +62,8 @@ export default {
 #nav {
   width: 250px;
   height: 100vh;
-  // position: fixed;
-  // top: 0;
-  // left: 0;
   background-color: #344a5f;
+  box-sizing: border-box;
   .logo {
     width: 100%;
     padding-top: 20px;

@@ -22,26 +22,43 @@
 export default {
   data() {
     return {
-      username:sessionStorage.getItem("userName")
+      username: sessionStorage.getItem("userName")
     };
   },
   methods: {
     collapseStatus() {
       this.$store.commit("app/controlCollapse");
-      // this.$store.commit("getUserInfo");
     },
+    // 退出登录
+    loginOut() {
+      this.$confirm("是否退出登录？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.$store.dispatch("app/loginOut");
+        this.$router.push({
+          path: "/login"
+        });
+        this.$message({
+          message: "退出成功",
+          type: "success"
+        });
+      }).catch(()=>{
+        this.$message({
+          message:"已取消"
+        })
+      })
+    }
   }
-};  
+};
 </script>
 
 <style lang="less" scoped>
 #header {
   line-height: 75px;
   height: 75px;
-  width: 83%;
-  position: fixed;
-  left: 250px;
-  top: 0;
+  width: 100%;
   background-color: #ffffff;
   box-shadow: 0 3px 16px 0 rgba(0, 0, 0, 0.3);
 }
@@ -57,7 +74,6 @@ export default {
   .header-right {
     display: flex;
     justify-content: flex-end;
-    // justify-content: center;
     align-items: center;
     .user-img {
       border-right: 1px solid #cccccc;
@@ -82,19 +98,13 @@ export default {
 }
 .open {
   #header {
-    position: fixed;
-    left: 250px;
-    top: 0;
-    width: 83%;
+    width: 100%;
     -webkit-transition: all 1s ease-in-out 0s;
   }
 }
 .close {
   #header {
-    position: fixed;
-    left: 64px;
-    top: 0;
-    width: 96%;
+    width: 100%;
     -webkit-transition: all 1s ease-in-out 0s;
   }
 }
