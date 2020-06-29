@@ -42,11 +42,11 @@
       v-loading="loading"
       >
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column prop="username" label="邮箱\用户名" width="203"></el-table-column>
+      <el-table-column prop="username" label="邮箱\用户名" width="205"></el-table-column>
       <el-table-column prop="truename" label="真实姓名" width="180"></el-table-column>
       <el-table-column prop="phone" label="手机号" width="135"></el-table-column>
       <el-table-column prop="region" label="地区" width="425"></el-table-column>
-      <el-table-column prop="role" label="角色" width="205"></el-table-column>
+      <el-table-column prop="role" label="角色" width="235"></el-table-column>
       <el-table-column label="禁启用状态" width="143">
         <template slot-scope="scope">
           <el-switch
@@ -59,7 +59,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="156">
+      <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="deleteUser(scope.row)">删除</el-button>
           <el-button type="success" size="mini" @click="editUser(scope.row)">编辑</el-button>
