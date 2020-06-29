@@ -8,11 +8,11 @@
         <div class="user-img">
           <img src="../../../assets/logo.png" alt />
           <div class="userName">
-            <span>{{ $store.state.userInfo.username }}</span>
+            <span>{{username}}</span>
           </div>
         </div>
 
-        <i class="el-icon-switch-button"></i>
+        <i class="el-icon-switch-button" @click="loginOut"></i>
       </div>
     </div>
   </div>
@@ -21,15 +21,17 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      username:sessionStorage.getItem("userName")
+    };
   },
   methods: {
     collapseStatus() {
-      this.$store.commit("controlCollapse");
-      this.$store.commit("getUserInfo");
-    }
+      this.$store.commit("app/controlCollapse");
+      // this.$store.commit("getUserInfo");
+    },
   }
-};
+};  
 </script>
 
 <style lang="less" scoped>

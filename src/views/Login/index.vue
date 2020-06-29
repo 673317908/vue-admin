@@ -197,14 +197,17 @@ export default {
               password: sha1(this.ruleForm.password),
               code: this.ruleForm.code
             };
-            this.$store
-              .dispatch("login", loginInfo)
-              .then(response => {
+            this.$store.dispatch("app/login", loginInfo).then(response => {
+                this.$message({
+                  message:response.message,
+                  type:"success"
+                })
                 this.$router.push({
                   path: "/control"
                 });
               })
               .catch(error => {
+                console.log(error)
               });
           } else {
             // 注册页面触发

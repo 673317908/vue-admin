@@ -23,7 +23,7 @@ export default {
   },
   computed:{
     indexStatus(){
-      return this.$store.state.isCollapse
+      return this.$store.state.app.isCollapse
     }
   }
 }

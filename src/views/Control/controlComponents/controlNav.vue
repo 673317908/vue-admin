@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     check_isCollapse() {
-      return (this.isCollapse = this.$store.state.isCollapse);
+      return (this.isCollapse = this.$store.state.app.isCollapse);
     }
   }
 };
