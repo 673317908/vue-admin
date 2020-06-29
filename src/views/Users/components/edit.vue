@@ -10,13 +10,13 @@
     >
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="邮箱：" :label-width="formLabelWidth" value prop="username">
-          <el-input v-model="form.username" autocomplete="off" placeholder="请输入邮箱"></el-input>
+          <el-input v-model="form.username" autocomplete="off" placeholder="请输入邮箱" clearable></el-input>
         </el-form-item>
         <el-form-item label="真实姓名：" :label-width="formLabelWidth" prop="truename">
-          <el-input v-model="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
+          <el-input v-model="form.truename" autocomplete="off" placeholder="请输入姓名" clearable></el-input>
         </el-form-item>
         <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
-          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号码"></el-input>
+          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号码" clearable></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">

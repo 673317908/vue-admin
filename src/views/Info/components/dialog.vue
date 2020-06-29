@@ -20,10 +20,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="标题" :label-width="formLabelWidth">
-          <el-input v-model="form.title" autocomplete="off"></el-input>
+          <el-input v-model="form.title" autocomplete="off" clearable></el-input>
         </el-form-item>
         <el-form-item label="概况" :label-width="formLabelWidth">
-          <el-input type="textarea" placeholder="请输入内容" autocomplete="off" v-model="form.content"></el-input>
+          <el-input type="textarea" placeholder="请输入内容" autocomplete="off" v-model="form.content" clearable></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

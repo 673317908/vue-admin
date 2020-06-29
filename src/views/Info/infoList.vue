@@ -62,6 +62,7 @@
           placeholder="请输入关键字"
           style="width:100%;"
           v-model="searchValue"
+          clearable
         ></el-input>
       </el-col>
       <el-col :span="2">

@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="新闻标题：">
-        <el-input v-model="form.title" style="width:30%;"></el-input>
+        <el-input v-model="form.title" style="width:30%;" clearable></el-input>
       </el-form-item>
       <el-form-item label="缩略图：">
         缩略图

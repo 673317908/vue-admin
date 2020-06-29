@@ -10,7 +10,7 @@
     >
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
-          <el-input v-model.trim="form.username" autocomplete="off" placeholder="请输入用户名"></el-input>
+          <el-input v-model.trim="form.username" autocomplete="off" placeholder="请输入用户名" clearable></el-input>
         </el-form-item>
         <el-form-item label="密码：" :label-width="formLabelWidth" prop="password">
           <el-input
@@ -18,13 +18,14 @@
             autocomplete="off"
             placeholder="请输入密码"
             type="password"
+            clearable
           ></el-input>
         </el-form-item>
         <el-form-item label="姓名：" :label-width="formLabelWidth" prop="truename">
-          <el-input v-model.trim="form.truename" autocomplete="off" placeholder="请输入姓名"></el-input>
+          <el-input v-model.trim="form.truename" autocomplete="off" placeholder="请输入姓名" clearable></el-input>
         </el-form-item>
         <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
-          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号"></el-input>
+          <el-input v-model.number="form.phone" autocomplete="off" placeholder="请输入手机号" clearable></el-input>
         </el-form-item>
         <el-form-item label="地区：" :label-width="formLabelWidth">
           <div class="of">

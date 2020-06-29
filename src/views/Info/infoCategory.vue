@@ -62,10 +62,10 @@
         <h4 class="meun_title">一级分类编辑</h4>
         <el-form label-width="142px" :model="form" class="w410">
           <el-form-item label="一级分类名称">
-            <el-input v-model="form.firstTitle" :disabled="firstInputStatus"></el-input>
+            <el-input v-model="form.firstTitle" :disabled="firstInputStatus" clearable></el-input>
           </el-form-item>
           <el-form-item label="子级分类名称" v-if="childrenInputStatus">
-            <el-input v-model="form.childrenTitle"></el-input>
+            <el-input v-model="form.childrenTitle" clearable></el-input>
           </el-form-item>
           <el-form-item>
             <el-button
