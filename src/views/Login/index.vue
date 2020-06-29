@@ -199,7 +199,7 @@ export default {
             };
             this.$store.dispatch("app/login", loginInfo).then(response => {
                 this.$message({
-                  message:response.message,
+                  message:response.data.message,
                   type:"success"
                 })
                 this.$router.push({
